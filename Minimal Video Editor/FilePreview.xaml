@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="Minimal_Video_Editor.FilePreview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Minimal_Video_Editor"
+             mc:Ignorable="d" 
+             MinHeight="120" MinWidth="180">
+    <Border BorderThickness="1" BorderBrush="DarkGray">
+        <Grid Background="black">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="80*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Image Grid.Row="0" x:Name="Image"></Image>
+            <Label Grid.Row="1" x:Name="Label" Foreground="White"></Label>
+        </Grid>
+        
+        </Border>
+</UserControl>

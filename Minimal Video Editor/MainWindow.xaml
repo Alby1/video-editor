@@ -8,78 +8,119 @@
         Title="MainWindow" Height="360" Width="640"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Closing="Window_Closing">
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" Executed="OpenCommandBinding_Executed"/>
+        <CommandBinding Command="Save" Executed="SaveCommandBinding_Executed"/>
+        <CommandBinding Command="SaveAs" Executed="SaveAsCommandBinding_Executed"/>
+        
+        <CommandBinding Command="local:MainWindow.SelectTool" Executed="showSelectionTool"/>
+        <CommandBinding Command="local:MainWindow.CuttingTool" Executed="showCuttingTool"/>
 
-    <Grid Background="Black">
-        <!-- come body html-->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60*"/>
-            <RowDefinition Height="40*"/>
-        </Grid.RowDefinitions>
+        <CommandBinding Command="local:MainWindow.PlayPause" Executed="PlayerTogglePlay"/>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="Open"></KeyBinding>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="Save"></KeyBinding>
+        <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="SaveAs"></KeyBinding>
 
-        <Grid Grid.Row="0">
-            <!--Riga sopra principale-->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30*"></ColumnDefinition>
-                <ColumnDefinition Width="70*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
+        <KeyBinding Key="V" Command="local:MainWindow.SelectTool"></KeyBinding>
+        <KeyBinding Key="C" Command="local:MainWindow.CuttingTool"></KeyBinding>
 
-            <Border Grid.Column="0" BorderBrush="Black" BorderThickness="2">
-                <Grid Background="Gray">
-                    <!--file loader-->
-                    <TextBlock FontFamily="Comic Sans MS" FontSize="36" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center">FILE LOADER</TextBlock>
-                </Grid>
-            </Border>
-            <Border Grid.Column="1" BorderBrush="Black" BorderThickness="2">
-                <Grid Background="Gray">
-                    <!--video player-->
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="90*"></RowDefinition>
-                        <RowDefinition Height="2"></RowDefinition>
-                        <RowDefinition Height="10*"></RowDefinition>
-                    </Grid.RowDefinitions>
+        <KeyBinding Key="Space" Command="local:MainWindow.PlayPause"></KeyBinding> <!--TOFIX: non funziona perché spingendo spazio di default aziona l'ultimo button selezionato-->
+    </Window.InputBindings>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" >
+            <MenuItem Header="File">
+                <MenuItem x:Name="LoadMenuItem" Header="Load" Command="Open" InputGestureText="Ctrl+O"></MenuItem>
+                <MenuItem x:Name="SaveMenuItem" Header="Save" Command="Save" InputGestureText="Ctrl+S"></MenuItem>
+                <MenuItem x:Name="SaveAsMenuItem" Header="Save as" Command="SaveAs" InputGestureText="Ctrl+Shift+S"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Export">
+                <MenuItem Header="Export"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Undo"></MenuItem>
+                <MenuItem Header="Redo"></MenuItem>
+            </MenuItem>
+        </Menu>
 
-                    <Image x:Name="CurrentFrameImage" Grid.Row="0"></Image>
-                    <!--playback-->
+        <Grid Background="Black" >
+            <!-- come body html-->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60*"/>
+                <RowDefinition Height="40*"/>
+            </Grid.RowDefinitions>
 
-                    <Rectangle Fill="Black" Grid.Row="1"></Rectangle>
+            <Grid Grid.Row="0">
+                <!--Riga sopra principale-->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30*"></ColumnDefinition>
+                    <ColumnDefinition Width="70*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button x:Name="PlayerPlayButton" Content="Play" Click="PlayerPlayButton_Click" Margin="0, 0, 10 ,0"/>
-                        <Button x:Name="PlayerPauseButton" Content="Pause" Click="PlayerPauseButton_Click" Margin="0, 0, 10 ,0"/>
-                        <Button  Content="debug start playing" Click="Start_Playing" Margin="0, 0, 10 ,0"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
+                <Border Grid.Column="0" BorderBrush="Black" BorderThickness="2">
+
+                    <Grid Background="Gray" Drop="Grid_Drop" AllowDrop="True">
+                        <!--file loader-->
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <WrapPanel x:Name="FileLoaderWrapPanel"/>
+
+                        </ScrollViewer>
+
+                    </Grid>
+                </Border>
+                <Border Grid.Column="1" BorderBrush="Black" BorderThickness="2">
+                    <Grid Background="Gray">
+                        <!--video player-->
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="90*"></RowDefinition>
+                            <RowDefinition Height="2"></RowDefinition>
+                            <RowDefinition Height="10*"></RowDefinition>
+                        </Grid.RowDefinitions>
+
+                        <Image x:Name="CurrentFrameImage" Grid.Row="0"></Image>
+                        <!--playback-->
+
+                        <Rectangle Fill="Black" Grid.Row="1"></Rectangle>
+
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button x:Name="PlayerPlayButton" Content="Play" Click="PlayerPlayButton_Click" Margin="0, 0, 10 ,0"/>
+                            <Button x:Name="PlayerPauseButton" Content="Pause" Click="PlayerPauseButton_Click" Margin="0, 0, 10 ,0"/>
+                            <Button  Content="debug start playing" Click="Start_Playing" Margin="0, 0, 10 ,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="1">
+                <!--Riga sotto principale-->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition ></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" BorderBrush="Black" BorderThickness="2">
+                    <Grid  Background="Gray">
+                        <!--toolbox-->
+
+                        <StackPanel Orientation="Vertical">
+                            <RadioButton x:Name="SelectionToolRadioButton" Checked="SelectionTool_Checked" Style="{StaticResource RadioToTools}" IsChecked="True">V</RadioButton>
+                            <!--selection tool-->
+                            <RadioButton x:Name="CuttingToolRadioButton" Checked="CuttingTool_Checked" Style="{StaticResource RadioToTools}">C</RadioButton>
+                            <!--cutting tool-->
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="1" BorderBrush="Black" BorderThickness="2">
+
+                    <Grid Background="Gray">
+                        <!--timeline-->
+                        <Label FontFamily="Comic Sans MS" Margin="128,40,0,0" HorizontalAlignment="Center" FontSize="48" HorizontalContentAlignment="Center" VerticalAlignment="Top">TIMELINE</Label>
+
+                    </Grid>
+                </Border>
+            </Grid>
+
         </Grid>
-        <Grid Grid.Row="1">
-            <!--Riga sotto principale-->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30"></ColumnDefinition>
-                <ColumnDefinition ></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-
-            <Border Grid.Column="0" BorderBrush="Black" BorderThickness="2">
-                <Grid  Background="Gray">
-                    <!--toolbox-->
-
-                    <StackPanel Orientation="Vertical">
-                        <RadioButton x:Name="SelectionToolRadioButton" Checked="SelectionTool_Checked" Style="{StaticResource RadioToTools}" IsChecked="True">V</RadioButton>
-                        <!--selection tool-->
-                        <RadioButton x:Name="CuttingToolRadioButton" Checked="CuttingTool_Checked" Style="{StaticResource RadioToTools}">C</RadioButton>
-                        <!--cutting tool-->
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <Border Grid.Column="1" BorderBrush="Black" BorderThickness="2">
-
-                <Grid Background="Gray">
-                    <!--timeline-->
-                    <Label FontFamily="Comic Sans MS" Margin="128,40,0,0" HorizontalAlignment="Center" FontSize="48" HorizontalContentAlignment="Center" VerticalAlignment="Top">TIMELINE</Label>
-
-                </Grid>
-            </Border>
-        </Grid>
-
-    </Grid>
+    </DockPanel>
 </Window>

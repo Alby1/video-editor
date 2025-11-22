@@ -1,10 +1,13 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
 using Microsoft.Windows.Themes;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -17,11 +20,20 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using static System.Net.Mime.MediaTypeNames;
-using System.Diagnostics;
+
+
+
+
+
+// TODO: audio, usiamo raylib?
+
+
 
 namespace Minimal_Video_Editor
 {
+
+
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -37,8 +49,17 @@ namespace Minimal_Video_Editor
 
 
 
-        private (RoutedCommand rc, ExecutedRoutedEventHandler func)[] KeyboardCommands;
+        private Project project = new ();
 
+        private string currentProjectPath = null;
+
+
+
+
+        public static readonly RoutedUICommand SelectTool = new RoutedUICommand("Show tool", "SelectTool", typeof(MainWindow));
+        public static readonly RoutedUICommand CuttingTool = new RoutedUICommand("Show tool", "CuttingTool", typeof(MainWindow));
+        
+        public static readonly RoutedUICommand PlayPause = new RoutedUICommand("Play/pause", "PlayPause", typeof(MainWindow));
 
 
         VideoCapture captureFrame;
@@ -93,24 +114,6 @@ namespace Minimal_Video_Editor
         {
             InitializeComponent();
             DataContext = this;
-
-
-
-            KeyboardCommands = [
-                (new RoutedCommand(" ", typeof(MainWindow), [new KeyGesture(Key.C, ModifierKeys.Alt)]),
-                showCuttingTool),
-                (new RoutedCommand(" ", typeof(MainWindow), [new KeyGesture(Key.V, ModifierKeys.Alt)]),
-                showSelectionTool),
-                (new RoutedCommand(" ", typeof(MainWindow), [new KeyGesture(Key.Space, ModifierKeys.Alt)]),
-                PlayerTogglePlay),
-            ];
-
-            for (int i = 0; i < KeyboardCommands.Length; i++)
-            {
-                CommandBindings.Add(new CommandBinding(KeyboardCommands[i].rc, KeyboardCommands[i].func));
-            }
-
-            
         }
 
 
@@ -155,9 +158,110 @@ namespace Minimal_Video_Editor
             PlayBackTimer.Stop();
         }
 
-        private void PlayerTogglePlay(object sender, RoutedEventArgs e) {
+        private void PlayerTogglePlay(object sender, ExecutedRoutedEventArgs e) {
             if(PlayBackTimer.Enabled) { PlayBackTimer.Stop(); }
             else { PlayBackTimer.Start(); }
+        }
+
+        private void LoadFile(string Filename)
+        {
+            FileLoaderWrapPanel.Children.Add(new FilePreview(Filename));
+            
+        }
+
+        private void Grid_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                foreach (var f in files)
+                {
+                    bool allowed = new FileInfo(f).Extension.ToLower() switch
+                    {
+                        ".mp4" or ".mkv" => true,
+                        _ => false
+                    };
+                    bool notadded = !project.files.Contains(f);
+                    if (allowed) {
+                        if(notadded)
+                        {
+                            LoadFile(f);
+                            project.files.Add(f);
+                        } else { MessageBox.Show("\"" + f + "\" was already added to this project.", "File Already Added Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
+                    }
+                    else { MessageBox.Show(new FileInfo(f).Extension + " is not an allowed file extension (" + new FileInfo(f).Name + ")", "File Extension Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
+                }
+
+                
+            }
+        }
+
+
+
+        private string SerializeProject()
+        {
+            string json = JsonSerializer.Serialize(project, new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                IncludeFields = true,
+            });
+            return json;
+        }
+
+        private void SaveProject()
+        {
+            if (currentProjectPath == null || !File.Exists(currentProjectPath))
+            {
+                SaveAsProject();
+            } else
+            {
+                string json = SerializeProject();
+                File.WriteAllText(currentProjectPath, json);
+            }
+        }
+        private void SaveAsProject()
+        {
+            string json = SerializeProject();
+            
+            var d = new Microsoft.Win32.SaveFileDialog() { Filter="Project file|*.json", DefaultExt=".json", FileName=(currentProjectPath is not null ? new FileInfo(currentProjectPath).Name : ""), RestoreDirectory=true};
+
+            if (d.ShowDialog() ?? false)
+            {
+                File.WriteAllText(d.FileName, json);
+                currentProjectPath = d.FileName;
+            }
+        }
+
+        private void LoadProject()
+        {
+            var d = new Microsoft.Win32.OpenFileDialog() { Filter="Project file|*.json", DefaultExt=".json", Multiselect=false};
+
+            if(d.ShowDialog() ?? false)
+            {
+                currentProjectPath = d.FileName;
+
+                FileLoaderWrapPanel.Children.Clear();
+
+                var json = File.ReadAllText(d.FileName);
+
+                project = JsonSerializer.Deserialize<Project>(json, new JsonSerializerOptions { AllowTrailingCommas=true, ReadCommentHandling=JsonCommentHandling.Skip, IncludeFields=true})!;
+
+                project.files.ForEach(f => { LoadFile(f); });
+            }
+        }
+
+        private void OpenCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            LoadProject();
+        }
+        private void SaveCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            SaveProject();
+        }
+        private void SaveAsCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            SaveAsProject();
         }
     }
 
