@@ -13,7 +13,7 @@
                 <RowDefinition Height="20"></RowDefinition>
             </Grid.RowDefinitions>
             <Image Grid.Row="0" x:Name="Image"></Image>
-            <Label Grid.Row="1" x:Name="Label" Foreground="White"/>
+            <Label Grid.Row="1" x:Name="Label" Foreground="White" Content="asdasdasd" Padding="5,0,5,0"/>
 
             
             <Grid.ContextMenu>
