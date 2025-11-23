@@ -13,8 +13,9 @@ Below are some screenshots and some remarks to show the progress made in time.
 
 
 ### 2025-11-23 (at 4am, again..)
+<img width="2560" height="1040" alt="image" src="https://github.com/user-attachments/assets/1a73c820-b1ab-42b8-9445-0165e2a53432" />
 
-<img width="2560" height="1040" alt="image" src="https://github.com/user-attachments/assets/8d37ce5d-f72b-41ba-9228-8c6d55647c36" />
+
 Timeline incoming 😮...
 
 
