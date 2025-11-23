@@ -190,6 +190,7 @@ namespace Minimal_Video_Editor
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             PlayBackTimer.Stop();
+            // TOFIX: se hai modifiche non salvate non chiudere
         }
 
         private void PlayerPlayButton_Click(object sender, RoutedEventArgs e)
