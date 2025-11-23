@@ -35,5 +35,12 @@ namespace Minimal_Video_Editor
             BitmapSource? b = a.Thumbnail?.ExtraLargeBitmapSource;
             Image.Source = b;
         }
+
+        private void SourceVideoPlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = (MainWindow)Application.Current.MainWindow;
+
+            window.PlaySourceVideo(Filename);
+        }
     }
 }

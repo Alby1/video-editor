@@ -66,9 +66,9 @@
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <WrapPanel x:Name="FileLoaderWrapPanel"/>
                         </ScrollViewer>
-                        <Label HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="NoFilesInFileLoaderLabel">
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="NoFilesInFileLoaderLabel" TextWrapping="Wrap" TextAlignment="Center" Margin="5, 0, 5, 0">
                             Drag files here to import them into the project
-                        </Label>
+                        </TextBlock>
 
                     </Grid>
                 </Border>
@@ -89,7 +89,6 @@
                         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
                             <Button x:Name="PlayerPlayButton" Content="Play" Click="PlayerPlayButton_Click" Margin="0, 0, 10 ,0"/>
                             <Button x:Name="PlayerPauseButton" Content="Pause" Click="PlayerPauseButton_Click" Margin="0, 0, 10 ,0"/>
-                            <Button  Content="debug start playing" Click="Start_Playing" Margin="0, 0, 10 ,0"/>
                         </StackPanel>
                     </Grid>
                 </Border>

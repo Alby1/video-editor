@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -71,28 +72,20 @@ namespace Minimal_Video_Editor
         Mat frame_copy = new Mat();
 
         System.Timers.Timer PlayBackTimer = new System.Timers.Timer();
-        int FPS = 30;
+        double FPS = 10;
 
         //Capture Image from file
-        private void GetVideoFrames(String Filename)
+        private void GetVideoFrames(string Filename)
         {
             try
             {
                 captureFrame = new VideoCapture(Filename);
                 captureFrame.Set(Emgu.CV.CvEnum.CapProp.PosFrames, 100);
-                
+                FPS = captureFrame.Get(Emgu.CV.CvEnum.CapProp.Fps);
+
                 //captureFrame.ImageGrabbed += ShowFrame;
-                
+
                 PlayBackTimer.Interval = 1000 / FPS;
-                PlayBackTimer.Elapsed += (_, _) => { CurrentFrameImage.Dispatcher.BeginInvoke(() => {
-                    Mat frame = captureFrame.QueryFrame();
-                    if(frame == null)
-                    {
-                        PlayBackTimer.Stop();
-                        return;
-                    }
-                    CurrentFrameImage.Source = ginopino.ToImageSource(frame.ToBitmap()); }, DispatcherPriority.Background);
-                };
                 PlayBackTimer.Start();
                 //captureFrame.Start();
             }
@@ -100,6 +93,20 @@ namespace Minimal_Video_Editor
             {
                 MessageBox.Show(ex.ToString());
             }
+        }
+
+        private void PlayFrame(object? sender, ElapsedEventArgs e)
+        {
+            CurrentFrameImage.Dispatcher.BeginInvoke(() =>
+            {
+                Mat frame = captureFrame.QueryFrame();
+                if (frame == null)
+                {
+                    PlayBackTimer.Stop();
+                    return;
+                }
+                CurrentFrameImage.Source = ginopino.ToImageSource(frame.ToBitmap());
+            }, DispatcherPriority.Background);
         }
 
         //Show in ImageBox
@@ -111,6 +118,11 @@ namespace Minimal_Video_Editor
             CurrentFrameImage.Dispatcher.Invoke(() => { CurrentFrameImage.Source = ginopino.ToImageSource(frame_copy.ToBitmap()); }, DispatcherPriority.Background);
         }
 
+        public void PlaySourceVideo(string Filename)
+        {
+            GetVideoFrames(Filename);
+        }
+
         
 
 
@@ -120,6 +132,8 @@ namespace Minimal_Video_Editor
             DataContext = this;
 
             SetWindowTitle();
+
+            PlayBackTimer.Elapsed += PlayFrame;
         }
 
         private void SetWindowTitle()
@@ -150,11 +164,6 @@ namespace Minimal_Video_Editor
         private void CuttingTool_Checked(object sender, RoutedEventArgs e)
         {
             CurrentlySelectedTool = 1;
-        }
-
-        private void Start_Playing(object sender, RoutedEventArgs e)
-        {
-            GetVideoFrames("D:\\Videos\\pre alpha Highness footage.mkv");
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

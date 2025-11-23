@@ -9,12 +9,21 @@
     <Border BorderThickness="1" BorderBrush="DarkGray">
         <Grid Background="black">
             <Grid.RowDefinitions>
-                <RowDefinition Height="80*"></RowDefinition>
-                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="20"></RowDefinition>
             </Grid.RowDefinitions>
             <Image Grid.Row="0" x:Name="Image"></Image>
-            <Label Grid.Row="1" x:Name="Label" Foreground="White"></Label>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="20"/>
+                </Grid.ColumnDefinitions>
+                
+                <Label Grid.Column="0" x:Name="Label" Foreground="White"/>
+                <Button Grid.Column="1" Click="SourceVideoPlayButton_Click">></Button>
+            </Grid>
+
         </Grid>
-        
-        </Border>
+
+    </Border>
 </UserControl>
