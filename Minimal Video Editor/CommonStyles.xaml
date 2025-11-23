@@ -3,4 +3,12 @@
     <Style TargetType="{x:Type MenuItem}">
         <Setter Property="ItemsPanel" Value="{StaticResource MenuItemPanelTemplate}"></Setter>
     </Style>
+
+    <Style TargetType="{x:Type Button}">
+        <Setter Property="Focusable" Value="False"></Setter>
+    </Style>
+
+    <Style TargetType="{x:Type RadioButton}">
+        <Setter Property="Focusable" Value="False"></Setter>
+    </Style>
 </ResourceDictionary>

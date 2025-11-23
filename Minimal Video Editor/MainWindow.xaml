@@ -26,14 +26,15 @@
         <KeyBinding Key="V" Command="local:MainWindow.SelectTool"></KeyBinding>
         <KeyBinding Key="C" Command="local:MainWindow.CuttingTool"></KeyBinding>
 
-        <KeyBinding Key="Space" Command="local:MainWindow.PlayPause"></KeyBinding> <!--TOFIX: non funziona perché spingendo spazio di default aziona l'ultimo button selezionato-->
+        <KeyBinding Key="Space" Command="local:MainWindow.PlayPause"></KeyBinding>
     </Window.InputBindings>
     <DockPanel>
         <Menu DockPanel.Dock="Top" >
             <MenuItem Header="File">
-                <MenuItem x:Name="LoadMenuItem" Header="Load" Command="Open" InputGestureText="Ctrl+O"></MenuItem>
+                <MenuItem x:Name="LoadMenuItem" Header="Load..." Command="Open" InputGestureText="Ctrl+O"></MenuItem>
                 <MenuItem x:Name="SaveMenuItem" Header="Save" Command="Save" InputGestureText="Ctrl+S"></MenuItem>
-                <MenuItem x:Name="SaveAsMenuItem" Header="Save as" Command="SaveAs" InputGestureText="Ctrl+Shift+S"></MenuItem>
+                <MenuItem x:Name="SaveAsMenuItem" Header="Save as..." Command="SaveAs" InputGestureText="Ctrl+Shift+S"></MenuItem>
+                <!--<MenuItem x:Name="ImportMediaMenuItem" Header="Import media..."></MenuItem>--> <!--TODO: this -->
             </MenuItem>
             <MenuItem Header="Export">
                 <MenuItem Header="Export"></MenuItem>
@@ -64,8 +65,10 @@
                         <!--file loader-->
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <WrapPanel x:Name="FileLoaderWrapPanel"/>
-
                         </ScrollViewer>
+                        <Label HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="NoFilesInFileLoaderLabel">
+                            Drag files here to import them into the project
+                        </Label>
 
                     </Grid>
                 </Border>

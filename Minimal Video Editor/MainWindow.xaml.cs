@@ -51,9 +51,13 @@ namespace Minimal_Video_Editor
 
         private Project project = new ();
 
-        private string currentProjectPath = null;
+        private string _currentProjectPath = null;
 
+        private string CurrentProjectPath { get => _currentProjectPath; set { _currentProjectPath = value; SetWindowTitle(); } }
 
+        private bool _hasUnsavedChanges = false;
+
+        private bool HasUnsavedChanges { get => _hasUnsavedChanges; set { _hasUnsavedChanges= value; SetWindowTitle(); } }
 
 
         public static readonly RoutedUICommand SelectTool = new RoutedUICommand("Show tool", "SelectTool", typeof(MainWindow));
@@ -114,6 +118,16 @@ namespace Minimal_Video_Editor
         {
             InitializeComponent();
             DataContext = this;
+
+            SetWindowTitle();
+        }
+
+        private void SetWindowTitle()
+        {
+            string projectName = (CurrentProjectPath is not null ? CurrentProjectPath : "New Project");
+            string unsavedChanges = (HasUnsavedChanges ? " *" : "");
+
+            Title = projectName + unsavedChanges + " - Malbyx Video Editor";
         }
 
 
@@ -166,7 +180,8 @@ namespace Minimal_Video_Editor
         private void LoadFile(string Filename)
         {
             FileLoaderWrapPanel.Children.Add(new FilePreview(Filename));
-            
+
+            NoFilesInFileLoaderLabel.Visibility = Visibility.Collapsed;
         }
 
         private void Grid_Drop(object sender, DragEventArgs e)
@@ -188,6 +203,7 @@ namespace Minimal_Video_Editor
                         {
                             LoadFile(f);
                             project.files.Add(f);
+                            HasUnsavedChanges = true;
                         } else { MessageBox.Show("\"" + f + "\" was already added to this project.", "File Already Added Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
                     }
                     else { MessageBox.Show(new FileInfo(f).Extension + " is not an allowed file extension (" + new FileInfo(f).Name + ")", "File Extension Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
@@ -210,26 +226,28 @@ namespace Minimal_Video_Editor
         }
 
         private void SaveProject()
-        {
-            if (currentProjectPath == null || !File.Exists(currentProjectPath))
+        {   
+            if (CurrentProjectPath == null || !File.Exists(CurrentProjectPath))
             {
                 SaveAsProject();
             } else
             {
                 string json = SerializeProject();
-                File.WriteAllText(currentProjectPath, json);
+                File.WriteAllText(CurrentProjectPath, json);
+                HasUnsavedChanges = false;
             }
         }
         private void SaveAsProject()
         {
             string json = SerializeProject();
             
-            var d = new Microsoft.Win32.SaveFileDialog() { Filter="Project file|*.json", DefaultExt=".json", FileName=(currentProjectPath is not null ? new FileInfo(currentProjectPath).Name : ""), RestoreDirectory=true};
+            var d = new Microsoft.Win32.SaveFileDialog() { Filter="Project file|*.json", DefaultExt=".json", FileName=(CurrentProjectPath is not null ? new FileInfo(CurrentProjectPath).Name : ""), RestoreDirectory=true};
 
             if (d.ShowDialog() ?? false)
             {
                 File.WriteAllText(d.FileName, json);
-                currentProjectPath = d.FileName;
+                CurrentProjectPath = d.FileName;
+                HasUnsavedChanges = false;
             }
         }
 
@@ -239,15 +257,18 @@ namespace Minimal_Video_Editor
 
             if(d.ShowDialog() ?? false)
             {
-                currentProjectPath = d.FileName;
+                CurrentProjectPath = d.FileName;
 
                 FileLoaderWrapPanel.Children.Clear();
+                NoFilesInFileLoaderLabel.Visibility = Visibility.Visible;
 
                 var json = File.ReadAllText(d.FileName);
 
                 project = JsonSerializer.Deserialize<Project>(json, new JsonSerializerOptions { AllowTrailingCommas=true, ReadCommentHandling=JsonCommentHandling.Skip, IncludeFields=true})!;
 
                 project.files.ForEach(f => { LoadFile(f); });
+
+                HasUnsavedChanges = false;
             }
         }
 
