@@ -29,6 +29,9 @@ using System.Windows.Threading;
 // TODO: audio, usiamo raylib?
 
 
+// TODO: undo/redo: undo history
+
+
 
 namespace Minimal_Video_Editor
 {
@@ -121,6 +124,24 @@ namespace Minimal_Video_Editor
         public void PlaySourceVideo(string Filename)
         {
             GetVideoFrames(Filename);
+        }
+
+        public void RemoveFile(string Filename)
+        {
+            project.files.Remove(Filename);
+
+            var toremove = FileLoaderWrapPanel.Children
+                .OfType<FilePreview>()
+                .Where(e => (e as FilePreview)?.Filename == Filename)
+                .FirstOrDefault();
+
+            FileLoaderWrapPanel.Children.Remove(toremove);
+
+            HasUnsavedChanges = true;
+
+            if (FileLoaderWrapPanel.Children.Count <= 0) {
+                NoFilesInFileLoaderLabel.Visibility = Visibility.Visible;
+            }
         }
 
         

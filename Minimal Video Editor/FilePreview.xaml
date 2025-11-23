@@ -13,16 +13,15 @@
                 <RowDefinition Height="20"></RowDefinition>
             </Grid.RowDefinitions>
             <Image Grid.Row="0" x:Name="Image"></Image>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="20"/>
-                </Grid.ColumnDefinitions>
-                
-                <Label Grid.Column="0" x:Name="Label" Foreground="White"/>
-                <Button Grid.Column="1" Click="SourceVideoPlayButton_Click">></Button>
-            </Grid>
+            <Label Grid.Row="1" x:Name="Label" Foreground="White"/>
 
+            
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Preview in player" Click="SourceVideoPlayButton_Click"></MenuItem>
+                    <MenuItem Header="Remove from project" Click="SourceVideoRemoveFromProject_Click"></MenuItem>
+                </ContextMenu>
+            </Grid.ContextMenu>
         </Grid>
 
     </Border>

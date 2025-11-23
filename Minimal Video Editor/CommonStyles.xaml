@@ -3,6 +3,9 @@
     <Style TargetType="{x:Type MenuItem}">
         <Setter Property="ItemsPanel" Value="{StaticResource MenuItemPanelTemplate}"></Setter>
     </Style>
+    <Style TargetType="{x:Type ContextMenu}">
+        <Setter Property="ItemsPanel" Value="{StaticResource MenuItemPanelTemplate}"></Setter>
+    </Style>
 
     <Style TargetType="{x:Type Button}">
         <Setter Property="Focusable" Value="False"></Setter>
