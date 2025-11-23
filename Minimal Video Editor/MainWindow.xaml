@@ -117,8 +117,7 @@
 
                     <Grid Background="Gray">
                         <!--timeline-->
-                        <Label FontFamily="Comic Sans MS" Margin="128,40,0,0" HorizontalAlignment="Center" FontSize="48" HorizontalContentAlignment="Center" VerticalAlignment="Top">TIMELINE</Label>
-
+                        <local:Timeline ></local:Timeline>
                     </Grid>
                 </Border>
             </Grid>

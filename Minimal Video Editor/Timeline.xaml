@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="Minimal_Video_Editor.Timeline"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Minimal_Video_Editor"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="800"
+             MouseWheel="UserControl_MouseWheel"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             Loaded="UserControl_Loaded"
+             >
+    
+    <DockPanel>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Height="20" x:Name="TicksStackPanel">
+            
+        </StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" PreviewMouseWheel="UserControl_MouseWheel" x:Name="TimelineScrollViewer">
+            <StackPanel Orientation="Horizontal" x:Name="TimelineStackPanel">
+                <StackPanel.LayoutTransform>
+                    <ScaleTransform ScaleX="{Binding Path=ScaleX}"></ScaleTransform>
+                </StackPanel.LayoutTransform>
+                <Rectangle Width="300" Fill="MediumPurple" Margin="0, 0, 20, 0" ></Rectangle>
+                <Rectangle Width="300" Fill="MediumPurple" Stroke="Purple"></Rectangle>
+            </StackPanel>
+        </ScrollViewer>
+        
+        
+    </DockPanel>
+</UserControl>
