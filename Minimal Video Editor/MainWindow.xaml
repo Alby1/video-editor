@@ -17,6 +17,8 @@
         <CommandBinding Command="local:MainWindow.CuttingTool" Executed="ShowCuttingTool"/>
 
         <CommandBinding Command="local:MainWindow.PlayPause" Executed="PlayerTogglePlay"/>
+
+        <CommandBinding Command="local:MainWindow.ImportMediaCommand" Executed="ImportMediaCommandBinding_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="O" Modifiers="Ctrl" Command="Open"></KeyBinding>
@@ -31,16 +33,22 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top" >
             <MenuItem Header="File">
+                <!--<MenuItem Header="New...">
+                    <MenuItem Header="This window"></MenuItem>
+                    <MenuItem Header="New window"></MenuItem>
+                </MenuItem>
+                <Separator></Separator>--> <!--TODO: this -->
                 <MenuItem x:Name="LoadMenuItem" Header="Load..." Command="Open" InputGestureText="Ctrl+O"></MenuItem>
+                <Separator></Separator>
                 <MenuItem x:Name="SaveMenuItem" Header="Save" Command="Save" InputGestureText="Ctrl+S"></MenuItem>
                 <MenuItem x:Name="SaveAsMenuItem" Header="Save as..." Command="SaveAs" InputGestureText="Ctrl+Shift+S"></MenuItem>
-                <!--<MenuItem x:Name="ImportMediaMenuItem" Header="Import media..."></MenuItem>--> <!--TODO: this -->
-            </MenuItem>
-            <MenuItem Header="Export">
-                <MenuItem Header="Export"></MenuItem>
+                <Separator></Separator>
+                <MenuItem x:Name="ImportMediaMenuItem" Header="Import media..." Command="local:MainWindow.ImportMediaCommand" ></MenuItem>
+                <MenuItem Header="Export"></MenuItem> <!--TODO: this -->
             </MenuItem>
             <MenuItem Header="Edit">
                 <MenuItem Header="Undo"></MenuItem>
+                <!--TODO: these /\ + \/ -->
                 <MenuItem Header="Redo"></MenuItem>
             </MenuItem>
         </Menu>

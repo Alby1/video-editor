@@ -7,12 +7,22 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Logo.ico</ApplicationIcon>
+    <ApplicationIcon>assets\Logo.ico</ApplicationIcon>
     <Authors>Malbyx INC</Authors>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Logo.ico" />
+    <None Remove="assets\mediamissing.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="assets\Logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="assets\mediamissing.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

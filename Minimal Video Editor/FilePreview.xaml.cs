@@ -26,24 +26,43 @@ namespace Minimal_Video_Editor
     {
         public string Filename;
 
+        private bool FileExists;
+
         private readonly MainWindow mainwindow;
-        public FilePreview(string Filename)
+        public FilePreview(string filename)
         {
             InitializeComponent();
+            Filename = filename;
 
-            this.Filename = Filename;
+            FileExists = File.Exists(Filename);
+
             Label.Content = new FileInfo(Filename).Name;
 
-            ShellFile a = ShellFile.FromFilePath(Filename);
-            BitmapSource? b = a.Thumbnail?.ExtraLargeBitmapSource;
-            Image.Source = b;
+            if (FileExists)
+            {
+                ShellFile a = ShellFile.FromFilePath(Filename);
+                BitmapSource? b = a.Thumbnail?.ExtraLargeBitmapSource;
+                Image.Source = b;
+            } else
+            {
+                Label.Foreground = Brushes.Red;
+
+                BitmapImage bm = new();
+                bm.BeginInit();
+                bm.UriSource = new Uri("/assets/mediamissing.png", UriKind.Relative);
+                bm.EndInit();
+                Image.Source = bm;
+
+                Cursor = Cursors.Hand;
+            }
+
 
             mainwindow = (MainWindow)Application.Current.MainWindow;
         }
 
         private void SourceVideoPlayButton_Click(object sender, RoutedEventArgs e)
         {
-            mainwindow.PlaySourceVideo(Filename);
+            if (FileExists) mainwindow.PlaySourceVideo(Filename);
         }
 
         private void SourceVideoRemoveFromProject_Click(object sender, RoutedEventArgs e)
@@ -56,9 +75,16 @@ namespace Minimal_Video_Editor
 
         private void UserControl_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton != MouseButtonState.Pressed) return;
+            if (e.LeftButton != MouseButtonState.Pressed || !FileExists) return;
 
             DragDrop.DoDragDrop(this, Filename, DragDropEffects.Move);
+        }
+
+        private void UserControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (FileExists) return;
+
+            mainwindow.RecoverMedia(Filename);
         }
     }
 }

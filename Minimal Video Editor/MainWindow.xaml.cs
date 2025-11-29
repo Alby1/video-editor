@@ -1,25 +1,15 @@
 ﻿using Emgu.CV;
-using Emgu.CV.Structure;
-using Microsoft.Windows.Themes;
-using System.Diagnostics;
+using Microsoft.Win32;
 using System.Drawing;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.Json;
 using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 
@@ -53,7 +43,7 @@ namespace Minimal_Video_Editor
 
 
 
-        private Project project = new ();
+        private Project project = new();
 
         private string CurrentProjectPath { get => field; set { field = value; SetWindowTitle(); } } = null!;
 
@@ -61,10 +51,12 @@ namespace Minimal_Video_Editor
         private bool HasUnsavedChanges { get => field; set { field = value; SetWindowTitle(); } } = false;
 
 
-        public static readonly RoutedUICommand SelectTool = new ("Show tool", "SelectTool", typeof(MainWindow));
-        public static readonly RoutedUICommand CuttingTool = new ("Show tool", "CuttingTool", typeof(MainWindow));
-        
-        public static readonly RoutedUICommand PlayPause = new ("Play/pause", "PlayPause", typeof(MainWindow));
+        public static readonly RoutedUICommand SelectTool = new("Show tool", "SelectTool", typeof(MainWindow));
+        public static readonly RoutedUICommand CuttingTool = new("Show tool", "CuttingTool", typeof(MainWindow));
+
+        public static readonly RoutedUICommand PlayPause = new("Play/pause", "PlayPause", typeof(MainWindow));
+
+        public static readonly RoutedUICommand ImportMediaCommand = new("Import media", "ImportMediaCommand", typeof(MainWindow));
 
 
         VideoCapture captureFrame = null!;
@@ -97,7 +89,7 @@ namespace Minimal_Video_Editor
         {
             CurrentFrameImage.Dispatcher.BeginInvoke(() =>
             {
-                Mat frame = captureFrame.QueryFrame();
+                Mat frame = captureFrame?.QueryFrame()!;
                 if (frame == null)
                 {
                     PlayBackTimer.Stop();
@@ -130,7 +122,7 @@ namespace Minimal_Video_Editor
             }
         }
 
-        
+
 
 
         public MainWindow()
@@ -190,7 +182,7 @@ namespace Minimal_Video_Editor
         }
 
         private void PlayerTogglePlay(object sender, ExecutedRoutedEventArgs e) {
-            if(PlayBackTimer.Enabled) { PlayBackTimer.Stop(); }
+            if (PlayBackTimer.Enabled) { PlayBackTimer.Stop(); }
             else { PlayBackTimer.Start(); }
         }
 
@@ -201,6 +193,8 @@ namespace Minimal_Video_Editor
             NoFilesInFileLoaderLabel.Visibility = Visibility.Collapsed;
         }
 
+        private static readonly string[] SupportedExtensions = [".mp4", ".mkv"];
+
         private void Grid_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -209,25 +203,28 @@ namespace Minimal_Video_Editor
 
                 foreach (var f in files)
                 {
-                    bool allowed = new FileInfo(f).Extension.ToLower() switch
-                    {
-                        ".mp4" or ".mkv" => true,
-                        _ => false
-                    };
-                    bool notadded = !project.files.Contains(f);
+                    bool allowed = SupportedExtensions.Contains(new FileInfo(f).Extension.ToLower());
+
                     if (allowed) {
-                        if(notadded)
-                        {
-                            LoadFile(f);
-                            project.files.Add(f);
-                            HasUnsavedChanges = true;
-                        } else { MessageBox.Show("\"" + f + "\" was already added to this project.", "File Already Added Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
+                        AddFile(f);
                     }
                     else { MessageBox.Show(new FileInfo(f).Extension + " is not an allowed file extension (" + new FileInfo(f).Name + ")", "File Extension Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
                 }
 
                 
             }
+        }
+
+        private void AddFile(string Filename)
+        {
+            bool notadded = !project.files.Contains(Filename);
+            if (notadded)
+            {
+                LoadFile(Filename);
+                project.files.Add(Filename);
+                HasUnsavedChanges = true;
+            }
+            else { MessageBox.Show("\"" + Filename + "\" was already added to this project.", "File Already Added Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
         }
 
 
@@ -265,7 +262,7 @@ namespace Minimal_Video_Editor
         {
             string json = SerializeProject();
             
-            var d = new Microsoft.Win32.SaveFileDialog() { Filter="Project file|*.mveproj", DefaultExt= ".mveproj", FileName=(CurrentProjectPath is not null ? new FileInfo(CurrentProjectPath).Name : ""), RestoreDirectory=true};
+            var d = new SaveFileDialog() { Filter="Project file|*.mveproj", DefaultExt= ".mveproj", FileName=(CurrentProjectPath is not null ? new FileInfo(CurrentProjectPath).Name : ""), RestoreDirectory=true};
 
             if (d.ShowDialog() ?? false)
             {
@@ -279,7 +276,7 @@ namespace Minimal_Video_Editor
 
         private void LoadProject()
         {
-            var d = new Microsoft.Win32.OpenFileDialog() { Filter= "Project file|*.mveproj", DefaultExt= ".mveproj", Multiselect=false};
+            var d = new OpenFileDialog() { Filter= "Project file|*.mveproj", DefaultExt= ".mveproj", Multiselect=false};
 
             if(d.ShowDialog() ?? false)
             {
@@ -316,9 +313,44 @@ namespace Minimal_Video_Editor
             SaveAsProject();
         }
 
+        private void ImportMediaCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            ImportMedia();
+        }
+
+        private void ImportMedia()
+        {
+            OpenFileDialog opf = new() { Filter = $"Media files|*{string.Join(";*", SupportedExtensions)}", Multiselect = true };
+
+            if(opf.ShowDialog() ?? false)
+            {
+                foreach (var f in opf.FileNames)
+                {
+                    AddFile(f);
+                }
+            }
+        }
+
+        public void RecoverMedia(string originalFilename)
+        {
+            string originalPath = new FileInfo(originalFilename).DirectoryName ?? "";
+            OpenFileDialog opf = new() { Filter = $"Media files|*{string.Join(";*", SupportedExtensions)}", Multiselect = false, InitialDirectory=originalPath };
+
+            if (opf.ShowDialog() ?? false)
+            {
+                RemoveFile(originalFilename);
+
+                AddFile(opf.FileName);
+
+                if(MessageBox.Show("File recovered, do you want to save now?", "Recovery completed", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    SaveProject();
+                }
+            }
+        }
     }
 
-    #pragma warning disable SYSLIB1054
+#pragma warning disable SYSLIB1054
     static class ImageConvertor
     {
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]

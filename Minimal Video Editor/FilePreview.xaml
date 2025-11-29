@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              MinHeight="120" MinWidth="180"
              PreviewMouseMove="UserControl_PreviewMouseMove"
+             MouseLeftButtonDown="UserControl_MouseLeftButtonDown"
              >
     <Border BorderThickness="1" BorderBrush="DarkGray">
         <Grid Background="black">
