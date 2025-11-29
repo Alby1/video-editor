@@ -265,7 +265,7 @@ namespace Minimal_Video_Editor
         {
             string json = SerializeProject();
             
-            var d = new Microsoft.Win32.SaveFileDialog() { Filter="Project file|*.json", DefaultExt=".json", FileName=(CurrentProjectPath is not null ? new FileInfo(CurrentProjectPath).Name : ""), RestoreDirectory=true};
+            var d = new Microsoft.Win32.SaveFileDialog() { Filter="Project file|*.mveproj", DefaultExt= ".mveproj", FileName=(CurrentProjectPath is not null ? new FileInfo(CurrentProjectPath).Name : ""), RestoreDirectory=true};
 
             if (d.ShowDialog() ?? false)
             {
@@ -279,23 +279,28 @@ namespace Minimal_Video_Editor
 
         private void LoadProject()
         {
-            var d = new Microsoft.Win32.OpenFileDialog() { Filter="Project file|*.json", DefaultExt=".json", Multiselect=false};
+            var d = new Microsoft.Win32.OpenFileDialog() { Filter= "Project file|*.mveproj", DefaultExt= ".mveproj", Multiselect=false};
 
             if(d.ShowDialog() ?? false)
             {
-                CurrentProjectPath = d.FileName;
-
-                FileLoaderWrapPanel.Children.Clear();
-                NoFilesInFileLoaderLabel.Visibility = Visibility.Visible;
-
-                var json = File.ReadAllText(d.FileName);
-
-                project = JsonSerializer.Deserialize<Project>(json, jsonDeserilazionOptions)!;
-
-                project.files.ForEach(f => { LoadFile(f); });
-
-                HasUnsavedChanges = false;
+                LoadProject(d.FileName);
             }
+        }
+
+        public void LoadProject(string filename)
+        {
+            CurrentProjectPath = filename;
+
+            FileLoaderWrapPanel.Children.Clear();
+            NoFilesInFileLoaderLabel.Visibility = Visibility.Visible;
+
+            var json = File.ReadAllText(filename);
+
+            project = JsonSerializer.Deserialize<Project>(json, jsonDeserilazionOptions)!;
+
+            project.files.ForEach(f => { LoadFile(f); });
+
+            HasUnsavedChanges = false;
         }
 
         private void OpenCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
