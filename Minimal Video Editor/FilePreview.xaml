@@ -5,7 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Minimal_Video_Editor"
              mc:Ignorable="d" 
-             MinHeight="120" MinWidth="180">
+             MinHeight="120" MinWidth="180"
+             PreviewMouseMove="UserControl_PreviewMouseMove"
+             >
     <Border BorderThickness="1" BorderBrush="DarkGray">
         <Grid Background="black">
             <Grid.RowDefinitions>

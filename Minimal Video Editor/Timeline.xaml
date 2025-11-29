@@ -15,13 +15,11 @@
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Height="20" x:Name="TicksStackPanel">
             
         </StackPanel>
-        <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" PreviewMouseWheel="UserControl_MouseWheel" x:Name="TimelineScrollViewer">
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" PreviewMouseWheel="UserControl_MouseWheel" x:Name="TimelineScrollViewer" Drop="TimelineStackPanel_Drop" AllowDrop="True">
             <StackPanel Orientation="Horizontal" x:Name="TimelineStackPanel">
                 <StackPanel.LayoutTransform>
                     <ScaleTransform ScaleX="{Binding Path=ScaleX}"></ScaleTransform>
                 </StackPanel.LayoutTransform>
-                <Rectangle Width="300" Fill="MediumPurple" Margin="0, 0, 20, 0" ></Rectangle>
-                <Rectangle Width="300" Fill="MediumPurple" Stroke="Purple"></Rectangle>
             </StackPanel>
         </ScrollViewer>
         

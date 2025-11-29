@@ -13,8 +13,8 @@
         <CommandBinding Command="Save" Executed="SaveCommandBinding_Executed"/>
         <CommandBinding Command="SaveAs" Executed="SaveAsCommandBinding_Executed"/>
         
-        <CommandBinding Command="local:MainWindow.SelectTool" Executed="showSelectionTool"/>
-        <CommandBinding Command="local:MainWindow.CuttingTool" Executed="showCuttingTool"/>
+        <CommandBinding Command="local:MainWindow.SelectTool" Executed="ShowSelectionTool"/>
+        <CommandBinding Command="local:MainWindow.CuttingTool" Executed="ShowCuttingTool"/>
 
         <CommandBinding Command="local:MainWindow.PlayPause" Executed="PlayerTogglePlay"/>
     </Window.CommandBindings>

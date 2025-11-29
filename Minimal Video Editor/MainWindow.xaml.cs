@@ -55,26 +55,21 @@ namespace Minimal_Video_Editor
 
         private Project project = new ();
 
-        private string _currentProjectPath = null;
-
-        private string CurrentProjectPath { get => _currentProjectPath; set { _currentProjectPath = value; SetWindowTitle(); } }
-
-        private bool _hasUnsavedChanges = false;
-
-        private bool HasUnsavedChanges { get => _hasUnsavedChanges; set { _hasUnsavedChanges= value; SetWindowTitle(); } }
+        private string CurrentProjectPath { get => field; set { field = value; SetWindowTitle(); } } = null!;
 
 
-        public static readonly RoutedUICommand SelectTool = new RoutedUICommand("Show tool", "SelectTool", typeof(MainWindow));
-        public static readonly RoutedUICommand CuttingTool = new RoutedUICommand("Show tool", "CuttingTool", typeof(MainWindow));
+        private bool HasUnsavedChanges { get => field; set { field = value; SetWindowTitle(); } } = false;
+
+
+        public static readonly RoutedUICommand SelectTool = new ("Show tool", "SelectTool", typeof(MainWindow));
+        public static readonly RoutedUICommand CuttingTool = new ("Show tool", "CuttingTool", typeof(MainWindow));
         
-        public static readonly RoutedUICommand PlayPause = new RoutedUICommand("Play/pause", "PlayPause", typeof(MainWindow));
+        public static readonly RoutedUICommand PlayPause = new ("Play/pause", "PlayPause", typeof(MainWindow));
 
 
-        VideoCapture captureFrame;
-        Mat frame = new Mat();
-        Mat frame_copy = new Mat();
+        VideoCapture captureFrame = null!;
 
-        System.Timers.Timer PlayBackTimer = new System.Timers.Timer();
+        private readonly System.Timers.Timer PlayBackTimer = new();
         double FPS = 10;
 
         //Capture Image from file
@@ -83,8 +78,8 @@ namespace Minimal_Video_Editor
             try
             {
                 captureFrame = new VideoCapture(Filename);
-                captureFrame.Set(Emgu.CV.CvEnum.CapProp.PosFrames, 100);
                 FPS = captureFrame.Get(Emgu.CV.CvEnum.CapProp.Fps);
+                //captureFrame.Set(Emgu.CV.CvEnum.CapProp.PosFrames, 100);
 
                 //captureFrame.ImageGrabbed += ShowFrame;
 
@@ -108,17 +103,8 @@ namespace Minimal_Video_Editor
                     PlayBackTimer.Stop();
                     return;
                 }
-                CurrentFrameImage.Source = ginopino.ToImageSource(frame.ToBitmap());
+                CurrentFrameImage.Source = ImageConvertor.ToImageSource(frame.ToBitmap());
             }, DispatcherPriority.Background);
-        }
-
-        //Show in ImageBox
-        private void ShowFrame(object sender, EventArgs e)
-        {
-            captureFrame.Retrieve(frame);
-            frame_copy = frame;
-
-            CurrentFrameImage.Dispatcher.Invoke(() => { CurrentFrameImage.Source = ginopino.ToImageSource(frame_copy.ToBitmap()); }, DispatcherPriority.Background);
         }
 
         public void PlaySourceVideo(string Filename)
@@ -166,11 +152,11 @@ namespace Minimal_Video_Editor
         }
 
 
-        public void showCuttingTool(object sender, ExecutedRoutedEventArgs e)
+        public void ShowCuttingTool(object sender, ExecutedRoutedEventArgs e)
         {
             CuttingToolRadioButton.IsChecked = true;
         }
-        public void showSelectionTool(object sender, ExecutedRoutedEventArgs e)
+        public void ShowSelectionTool(object sender, ExecutedRoutedEventArgs e)
         {
             SelectionToolRadioButton.IsChecked = true;
         }
@@ -245,14 +231,21 @@ namespace Minimal_Video_Editor
         }
 
 
+        public void AddClip(ClipFormat clip)
+        {
+            project.clips.Add(clip);
+        }
+
+
+        private static readonly JsonSerializerOptions jsonSerializationOptions = new()
+        {
+            WriteIndented = true,
+            IncludeFields = true,
+        };
 
         private string SerializeProject()
         {
-            string json = JsonSerializer.Serialize(project, new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                IncludeFields = true,
-            });
+            string json = JsonSerializer.Serialize(project, jsonSerializationOptions);
             return json;
         }
 
@@ -282,6 +275,8 @@ namespace Minimal_Video_Editor
             }
         }
 
+        private static readonly JsonSerializerOptions jsonDeserilazionOptions = new() { AllowTrailingCommas = true, ReadCommentHandling = JsonCommentHandling.Skip, IncludeFields = true };
+
         private void LoadProject()
         {
             var d = new Microsoft.Win32.OpenFileDialog() { Filter="Project file|*.json", DefaultExt=".json", Multiselect=false};
@@ -295,7 +290,7 @@ namespace Minimal_Video_Editor
 
                 var json = File.ReadAllText(d.FileName);
 
-                project = JsonSerializer.Deserialize<Project>(json, new JsonSerializerOptions { AllowTrailingCommas=true, ReadCommentHandling=JsonCommentHandling.Skip, IncludeFields=true})!;
+                project = JsonSerializer.Deserialize<Project>(json, jsonDeserilazionOptions)!;
 
                 project.files.ForEach(f => { LoadFile(f); });
 
@@ -318,7 +313,8 @@ namespace Minimal_Video_Editor
 
     }
 
-    static class ginopino
+    #pragma warning disable SYSLIB1054
+    static class ImageConvertor
     {
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -334,4 +330,5 @@ namespace Minimal_Video_Editor
             finally { DeleteObject(handle); }
         }
     }
+    #pragma warning restore SYSLIB1054
 }

@@ -26,7 +26,7 @@ namespace Minimal_Video_Editor
     {
         public string Filename;
 
-        private MainWindow mainwindow;
+        private readonly MainWindow mainwindow;
         public FilePreview(string Filename)
         {
             InitializeComponent();
@@ -52,6 +52,13 @@ namespace Minimal_Video_Editor
             {
                 mainwindow.RemoveFile(Filename);
             }
+        }
+
+        private void UserControl_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton != MouseButtonState.Pressed) return;
+
+            DragDrop.DoDragDrop(this, Filename, DragDropEffects.Move);
         }
     }
 }
