@@ -40,5 +40,5 @@ Really looks like it's coming along.
 
 ### 2025-11-22 (at 4am)
 <img width="2096" height="1040" alt="image" src="https://github.com/user-attachments/assets/235bc1ea-73c4-4f33-9788-c67312b89411" />
-If you're asking: yes, I _heavily_ took inspiration from _a software_ (bet you can't guess which tho).
+If you're asking: yes, I <i>heavily</i> took inspiration from <i>a software</i> (bet you can't guess which tho).
 
