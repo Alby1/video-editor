@@ -11,6 +11,20 @@ Below are some screenshots and some remarks to show the progress made in time.
 (In reverse chronological order)
 
 
+### 2025-11-30 
+<img width="2556" height="1040" alt="image" src="https://github.com/user-attachments/assets/db2b37e2-404e-4bb2-b9bf-8f41bc693f5b" />
+
+Custom file extension!
+
+<img width="2096" height="1040" alt="image" src="https://github.com/user-attachments/assets/6a0cff24-e298-47a3-83b6-441c08cd4acc" />
+
+
+Missing media features
+
+<img width="2096" height="1040" alt="image" src="https://github.com/user-attachments/assets/e28233b2-6024-4c08-b805-c3d88514a485" />
+
+Timeline is getting.. somewhere!
+
 
 ### 2025-11-23 (at 4am, again..)
 <img width="2560" height="1040" alt="image" src="https://github.com/user-attachments/assets/1a73c820-b1ab-42b8-9445-0165e2a53432" />
