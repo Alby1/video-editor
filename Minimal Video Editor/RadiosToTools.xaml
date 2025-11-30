@@ -9,7 +9,7 @@
                     <Grid Height="{Binding ActualWidth,RelativeSource={RelativeSource Self}}">
                         <Grid.Style>
                             <Style TargetType="Grid">
-                                <Setter Property="Background" Value="LightGray"></Setter>
+                                <Setter Property="Background" Value="#000040"></Setter>
 
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding  RelativeSource={RelativeSource TemplatedParent}, Path=IsChecked}" Value="True">

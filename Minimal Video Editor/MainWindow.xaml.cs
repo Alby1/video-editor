@@ -76,7 +76,7 @@ namespace Minimal_Video_Editor
                 //captureFrame.ImageGrabbed += ShowFrame;
 
                 PlayBackTimer.Interval = 1000 / FPS;
-                PlayBackTimer.Start();
+                StartPlayback();
                 //captureFrame.Start();
             }
             catch (Exception ex)
@@ -92,7 +92,7 @@ namespace Minimal_Video_Editor
                 Mat frame = captureFrame?.QueryFrame()!;
                 if (frame == null)
                 {
-                    PlayBackTimer.Stop();
+                    PausePlayback();
                     return;
                 }
                 CurrentFrameImage.Source = ImageConvertor.ToImageSource(frame.ToBitmap());
@@ -133,6 +133,8 @@ namespace Minimal_Video_Editor
             SetWindowTitle();
 
             PlayBackTimer.Elapsed += PlayFrame;
+
+            PausePlayback();
         }
 
         private void SetWindowTitle()
@@ -167,23 +169,37 @@ namespace Minimal_Video_Editor
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            PlayBackTimer.Stop();
+            PausePlayback();
             // TOFIX: se hai modifiche non salvate non chiudere
         }
 
         private void PlayerPlayButton_Click(object sender, RoutedEventArgs e)
         {
+            StartPlayback();
+        }
+
+        private void StartPlayback()
+        {
             PlayBackTimer.Start();
+            PlayerPlayButton.Tag = "current";
+            PlayerPauseButton.Tag = "";
         }
 
         private void PlayerPauseButton_Click(object sender, RoutedEventArgs e)
         {
+            PausePlayback();
+        }
+
+        private void PausePlayback()
+        {
             PlayBackTimer.Stop();
+            PlayerPauseButton.Tag = "current";
+            PlayerPlayButton.Tag = "";
         }
 
         private void PlayerTogglePlay(object sender, ExecutedRoutedEventArgs e) {
-            if (PlayBackTimer.Enabled) { PlayBackTimer.Stop(); }
-            else { PlayBackTimer.Start(); }
+            if (PlayBackTimer.Enabled) { PausePlayback(); }
+            else { StartPlayback(); }
         }
 
         private void LoadFile(string Filename)

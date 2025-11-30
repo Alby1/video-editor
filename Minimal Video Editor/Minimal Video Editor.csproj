@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="assets\mediamissing.png" />
+    <None Remove="assets\*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="assets\mediamissing.png">
+    <Resource Include="assets\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

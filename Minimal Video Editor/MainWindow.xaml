@@ -95,8 +95,12 @@
                         <Rectangle Fill="Black" Grid.Row="1"></Rectangle>
 
                         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Button x:Name="PlayerPlayButton" Content="Play" Click="PlayerPlayButton_Click" Margin="0, 0, 10 ,0"/>
-                            <Button x:Name="PlayerPauseButton" Content="Pause" Click="PlayerPauseButton_Click" Margin="0, 0, 10 ,0"/>
+                            <Button x:Name="PlayerPlayButton" Click="PlayerPlayButton_Click" Margin="0, 0, 10 ,0" Padding="0" Background="#000040">
+                                <Image Source="/assets/play.png"></Image>
+                            </Button>
+                            <Button x:Name="PlayerPauseButton" Click="PlayerPauseButton_Click" Margin="0, 0, 10 ,0" Padding="0" Background="#000040">
+                                <Image Source="/assets/pause.png"></Image>
+                            </Button>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -113,9 +117,13 @@
                         <!--toolbox-->
 
                         <StackPanel Orientation="Vertical">
-                            <RadioButton x:Name="SelectionToolRadioButton" Checked="SelectionTool_Checked" Style="{StaticResource RadioToTools}" IsChecked="True">V</RadioButton>
+                            <RadioButton x:Name="SelectionToolRadioButton" Checked="SelectionTool_Checked" Style="{StaticResource RadioToTools}" IsChecked="True" Padding="0">
+                                <Image Source="/assets/select.png"></Image>
+                            </RadioButton>
                             <!--selection tool-->
-                            <RadioButton x:Name="CuttingToolRadioButton" Checked="CuttingTool_Checked" Style="{StaticResource RadioToTools}">C</RadioButton>
+                            <RadioButton x:Name="CuttingToolRadioButton" Checked="CuttingTool_Checked" Style="{StaticResource RadioToTools}" Padding="0">
+                                <Image Source="/assets/cut.png"></Image>
+                            </RadioButton>
                             <!--cutting tool-->
                         </StackPanel>
                     </Grid>
