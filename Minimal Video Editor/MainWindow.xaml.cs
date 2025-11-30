@@ -174,7 +174,30 @@ namespace Minimal_Video_Editor
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             PausePlayback();
-            // TOFIX: se hai modifiche non salvate non chiudere
+
+            if(HasUnsavedChanges)
+            {
+                MessageBoxResult a = MessageBox.Show("You have unsaved changes in this project. Do you want to save them now before closing the window?", "Shutting down", MessageBoxButton.YesNoCancel);
+
+                // if Cancel = don't close the window
+                if (a == MessageBoxResult.Cancel)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+
+                if (a == MessageBoxResult.Yes)
+                {
+                    // if Yes: proceed with saving current
+                    // but only if saving was successful
+                    if (!SaveProject())
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+                // if No: proceed without saving
+            }
         }
 
         private void PlayerPlayButton_Click(object sender, RoutedEventArgs e)
@@ -266,19 +289,19 @@ namespace Minimal_Video_Editor
             return json;
         }
 
-        private void SaveProject()
+        private bool SaveProject()
         {   
             if (CurrentProjectPath == null || !File.Exists(CurrentProjectPath))
             {
-                SaveAsProject();
-            } else
-            {
-                string json = SerializeProject();
-                File.WriteAllText(CurrentProjectPath, json);
-                HasUnsavedChanges = false;
+                return SaveAsProject();
             }
+            
+            string json = SerializeProject();
+            File.WriteAllText(CurrentProjectPath, json);
+            HasUnsavedChanges = false;
+            return true;
         }
-        private void SaveAsProject()
+        private bool SaveAsProject()
         {
             string json = SerializeProject();
             
@@ -289,7 +312,9 @@ namespace Minimal_Video_Editor
                 File.WriteAllText(d.FileName, json);
                 CurrentProjectPath = d.FileName;
                 HasUnsavedChanges = false;
+                return true;
             }
+            return false;
         }
 
         private static readonly JsonSerializerOptions jsonDeserilazionOptions = new() { AllowTrailingCommas = true, ReadCommentHandling = JsonCommentHandling.Skip, IncludeFields = true };
@@ -363,7 +388,8 @@ namespace Minimal_Video_Editor
                 if (a == MessageBoxResult.Yes)
                 {
                     // if Yes: proceed with saving current
-                    SaveProject();
+                    // but only if the saving was successful
+                    if (!SaveProject()) return;
                 }
                 // if No: proceed without saving
 
