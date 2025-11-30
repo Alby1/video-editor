@@ -20,31 +20,26 @@ public partial class App : Application
     {
         if(!Settings.Default.RegEdited)
         {
-            if (MessageBox.Show("Would you like to associate .mveproj (Malbyx Video Editor Project) files to open with this software?", "File association prompt", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            try
             {
-                try
+                Process process = new();
+                ProcessStartInfo startInfo = new()
                 {
-                    Process process = new();
-                    ProcessStartInfo startInfo = new()
-                    {
-                        WindowStyle = ProcessWindowStyle.Hidden,
-                        FileName = "reg",
-                        Arguments = $"add HKCR\\.mveproj\\Shell\\Open\\Command /t REG_SZ /ve /f /d \"\\\"{AppDomain.CurrentDomain.BaseDirectory}{AppDomain.CurrentDomain.FriendlyName}.exe\\\" \\\"%1\\\"\"",
-                        Verb = "runas",
-                        UseShellExecute = true,
-                    };
-                    process.StartInfo = startInfo;
-                    process.Start();
-                    process.WaitForExit();
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    FileName = "reg",
+                    Arguments = $"add HKCU\\SOFTWARE\\Classes\\.mveproj\\Shell\\Open\\Command /t REG_SZ /ve /f /d \"\\\"{AppDomain.CurrentDomain.BaseDirectory}{AppDomain.CurrentDomain.FriendlyName}.exe\\\" \\\"%1\\\"\"",
+                    UseShellExecute = true,
+                };
+                process.StartInfo = startInfo;
+                process.Start();
+                process.WaitForExit();
 
 
-                    Settings.Default.RegEdited = true;
-                    Settings.Default.Save();
-                }
-                catch (UnauthorizedAccessException) { }
-                catch (SecurityException) { }
+                Settings.Default.RegEdited = true;
+                Settings.Default.Save();
             }
-
+            catch (UnauthorizedAccessException) { }
+            catch (SecurityException) { }
         }
 
 
