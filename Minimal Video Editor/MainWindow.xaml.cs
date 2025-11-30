@@ -177,7 +177,8 @@ namespace Minimal_Video_Editor
 
             if(HasUnsavedChanges)
             {
-                MessageBoxResult a = MessageBox.Show("You have unsaved changes in this project. Do you want to save them now before closing the window?", "Shutting down", MessageBoxButton.YesNoCancel);
+                MessageBoxResult a = MessageBox.Show("You have unsaved changes in this project.\nDo you want to save them now before closing the window?",
+                "Shutting down", MessageBoxButton.YesNoCancel);
 
                 // if Cancel = don't close the window
                 if (a == MessageBoxResult.Cancel)
@@ -380,7 +381,8 @@ namespace Minimal_Video_Editor
         {
             if(HasUnsavedChanges)
             {
-                MessageBoxResult a = MessageBox.Show("You have unsaved changes in this project. Do you want to save them now before opening a new project?", "New project?", MessageBoxButton.YesNoCancel);
+                MessageBoxResult a = MessageBox.Show("You have unsaved changes in this project.\nDo you want to save them now before opening a new project?",
+                "New project?", MessageBoxButton.YesNoCancel);
                 
                 // if Cancel = don't open new project
                 if (a == MessageBoxResult.Cancel) return;
@@ -425,7 +427,8 @@ namespace Minimal_Video_Editor
 
                 AddFile(opf.FileName);
 
-                if(MessageBox.Show("File recovered, do you want to save now?", "Recovery completed", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                if(MessageBox.Show("File recovered!\nDo you want to save the project now?",
+                "Recovery completed", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     SaveProject();
                 }
@@ -455,5 +458,5 @@ namespace Minimal_Video_Editor
             finally { DeleteObject(handle); }
         }
     }
-    #pragma warning restore SYSLIB1054
 }
+#pragma warning restore SYSLIB1054
