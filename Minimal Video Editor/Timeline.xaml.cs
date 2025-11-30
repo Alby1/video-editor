@@ -125,6 +125,15 @@ namespace Minimal_Video_Editor
             mainwindow.AddClip(clip);
 
             UpdateTicks();
+
+            mainwindow.IHaveMadeChanges();
+        }
+
+        public void Clear()
+        {
+            TimelineStackPanel.Children.Clear();
+            UpdateTicks();
+            ScaleX = defaultScale;
         }
     }
 }

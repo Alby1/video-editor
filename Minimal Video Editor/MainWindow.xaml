@@ -19,6 +19,9 @@
         <CommandBinding Command="local:MainWindow.PlayPause" Executed="PlayerTogglePlay"/>
 
         <CommandBinding Command="local:MainWindow.ImportMediaCommand" Executed="ImportMediaCommandBinding_Executed"/>
+
+        <CommandBinding Command="local:MainWindow.NewProjectThisWindow" Executed="NewProjectThisWindowCommandBinding_Executed"/>
+        <CommandBinding Command="local:MainWindow.NewProjectNewWindow" Executed="NewProjectNewWindowCommandBinding_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="O" Modifiers="Ctrl" Command="Open"></KeyBinding>
@@ -29,15 +32,18 @@
         <KeyBinding Key="C" Command="local:MainWindow.CuttingTool"></KeyBinding>
 
         <KeyBinding Key="Space" Command="local:MainWindow.PlayPause"></KeyBinding>
+
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="local:MainWindow.NewProjectThisWindow"></KeyBinding>
+        <KeyBinding Key="N" Modifiers="Ctrl+Shift" Command="local:MainWindow.NewProjectNewWindow"></KeyBinding>
     </Window.InputBindings>
     <DockPanel>
         <Menu DockPanel.Dock="Top" >
             <MenuItem Header="File">
-                <!--<MenuItem Header="New...">
-                    <MenuItem Header="This window"></MenuItem>
-                    <MenuItem Header="New window"></MenuItem>
+                <MenuItem Header="New...">
+                    <MenuItem x:Name="NewThisWindowMenuItem" Command="local:MainWindow.NewProjectThisWindow" Header="This window" InputGestureText="Ctrl+N"></MenuItem>
+                    <MenuItem x:Name="NewNewWindowMenuItem" Command="local:MainWindow.NewProjectNewWindow" Header="New window" InputGestureText="Ctrl+Shift+N"></MenuItem>
                 </MenuItem>
-                <Separator></Separator>--> <!--TODO: this -->
+                <Separator></Separator>
                 <MenuItem x:Name="LoadMenuItem" Header="Load..." Command="Open" InputGestureText="Ctrl+O"></MenuItem>
                 <Separator></Separator>
                 <MenuItem x:Name="SaveMenuItem" Header="Save" Command="Save" InputGestureText="Ctrl+S"></MenuItem>
@@ -133,7 +139,7 @@
 
                     <Grid Background="Gray">
                         <!--timeline-->
-                        <local:Timeline ></local:Timeline>
+                        <local:Timeline x:Name="Timeline" ></local:Timeline>
                     </Grid>
                 </Border>
             </Grid>

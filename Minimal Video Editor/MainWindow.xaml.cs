@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using Microsoft.Win32;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -57,6 +58,9 @@ namespace Minimal_Video_Editor
         public static readonly RoutedUICommand PlayPause = new("Play/pause", "PlayPause", typeof(MainWindow));
 
         public static readonly RoutedUICommand ImportMediaCommand = new("Import media", "ImportMediaCommand", typeof(MainWindow));
+        
+        public static readonly RoutedUICommand NewProjectThisWindow = new("New project in this window", "NewProjectThisWindow", typeof(MainWindow));
+        public static readonly RoutedUICommand NewProjectNewWindow = new("New project in a new window", "NewProjectNewWindow", typeof(MainWindow));
 
 
         VideoCapture captureFrame = null!;
@@ -333,18 +337,55 @@ namespace Minimal_Video_Editor
         {
             ImportMedia();
         }
-
         private void ImportMedia()
         {
             OpenFileDialog opf = new() { Filter = $"Media files|*{string.Join(";*", SupportedExtensions)}", Multiselect = true };
 
-            if(opf.ShowDialog() ?? false)
+            if (opf.ShowDialog() ?? false)
             {
                 foreach (var f in opf.FileNames)
                 {
                     AddFile(f);
                 }
             }
+        }
+
+
+        private void NewProjectThisWindowCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if(HasUnsavedChanges)
+            {
+                MessageBoxResult a = MessageBox.Show("You have unsaved changes in this project. Do you want to save them now before opening a new project?", "New project?", MessageBoxButton.YesNoCancel);
+                
+                // if Cancel = don't open new project
+                if (a == MessageBoxResult.Cancel) return;
+                
+                if (a == MessageBoxResult.Yes)
+                {
+                    // if Yes: proceed with saving current
+                    SaveProject();
+                }
+                // if No: proceed without saving
+
+                project = new Project();
+                CurrentProjectPath = null!;
+                Timeline.Clear();
+                FileLoaderWrapPanel.Children.Clear();
+                NoFilesInFileLoaderLabel.Visibility = Visibility.Visible;
+                HasUnsavedChanges = false;
+            }
+        }
+
+        private void NewProjectNewWindowCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Process process = new();
+            ProcessStartInfo startInfo = new()
+            {
+                FileName = $"{AppDomain.CurrentDomain.BaseDirectory}{AppDomain.CurrentDomain.FriendlyName}.exe",
+                UseShellExecute = true,
+            };
+            process.StartInfo = startInfo;
+            process.Start();
         }
 
         public void RecoverMedia(string originalFilename)
@@ -363,6 +404,11 @@ namespace Minimal_Video_Editor
                     SaveProject();
                 }
             }
+        }
+
+        public void IHaveMadeChanges()
+        {
+            HasUnsavedChanges = true;
         }
     }
 
