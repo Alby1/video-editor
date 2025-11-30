@@ -89,6 +89,11 @@ namespace Minimal_Video_Editor
             }
         }
 
+        /// <summary>
+        /// Play a single frame
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PlayFrame(object? sender, ElapsedEventArgs e)
         {
             CurrentFrameImage.Dispatcher.BeginInvoke(() =>
@@ -103,11 +108,19 @@ namespace Minimal_Video_Editor
             }, DispatcherPriority.Background);
         }
 
+        /// <summary>
+        /// Plays a video by its file path
+        /// </summary>
+        /// <param name="Filename">File's full path</param>
         public void PlaySourceVideo(string Filename)
         {
             GetVideoFrames(Filename);
         }
 
+        /// <summary>
+        /// Remove a file from the project
+        /// </summary>
+        /// <param name="Filename">The file's full path</param>
         public void RemoveFile(string Filename)
         {
             project.files.Remove(Filename);
@@ -171,6 +184,12 @@ namespace Minimal_Video_Editor
             CurrentlySelectedTool = 1;
         }
 
+        /// <summary>
+        /// When the window is about close, this function is called.
+        /// It prevents loss of data
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             PausePlayback();
@@ -206,6 +225,9 @@ namespace Minimal_Video_Editor
             StartPlayback();
         }
 
+        /// <summary>
+        /// Start the playback on the video player
+        /// </summary>
         private void StartPlayback()
         {
             PlayBackTimer.Start();
@@ -218,6 +240,9 @@ namespace Minimal_Video_Editor
             PausePlayback();
         }
 
+        /// <summary>
+        /// Pause the playback on the video player
+        /// </summary>
         private void PausePlayback()
         {
             PlayBackTimer.Stop();
@@ -225,11 +250,20 @@ namespace Minimal_Video_Editor
             PlayerPlayButton.Tag = "";
         }
 
+        /// <summary>
+        /// Toggles the playback on the video player
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PlayerTogglePlay(object sender, ExecutedRoutedEventArgs e) {
             if (PlayBackTimer.Enabled) { PausePlayback(); }
             else { StartPlayback(); }
         }
 
+        /// <summary>
+        /// Load a file into the FileLoader
+        /// </summary>
+        /// <param name="Filename">Full file's path</param>
         private void LoadFile(string Filename)
         {
             FileLoaderWrapPanel.Children.Add(new FilePreview(Filename));
@@ -239,6 +273,11 @@ namespace Minimal_Video_Editor
 
         private static readonly string[] SupportedExtensions = [".mp4", ".mkv"];
 
+        /// <summary>
+        /// This function is called when a file is getting dropped in the FileLoader
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Grid_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -259,6 +298,10 @@ namespace Minimal_Video_Editor
             }
         }
 
+        /// <summary>
+        /// Add the file to the project
+        /// </summary>
+        /// <param name="Filename">File's full path</param>
         private void AddFile(string Filename)
         {
             bool notadded = !project.files.Contains(Filename);
@@ -272,6 +315,10 @@ namespace Minimal_Video_Editor
         }
 
 
+        /// <summary>
+        /// Adds a clip to the timeline
+        /// </summary>
+        /// <param name="clip"></param>
         public void AddClip(ClipFormat clip)
         {
             project.clips.Add(clip);
@@ -284,12 +331,20 @@ namespace Minimal_Video_Editor
             IncludeFields = true,
         };
 
+        /// <summary>
+        /// Serialize the current project into json
+        /// </summary>
+        /// <returns>The json</returns>
         private string SerializeProject()
         {
             string json = JsonSerializer.Serialize(project, jsonSerializationOptions);
             return json;
         }
 
+        /// <summary>
+        /// Saves the project in the file CurrentProjectPath 
+        /// </summary>
+        /// <returns>true if the save was successfull</returns>
         private bool SaveProject()
         {   
             if (CurrentProjectPath == null || !File.Exists(CurrentProjectPath))
@@ -302,6 +357,11 @@ namespace Minimal_Video_Editor
             HasUnsavedChanges = false;
             return true;
         }
+
+        /// <summary>
+        /// Saves the project in the file the user choses
+        /// </summary>
+        /// <returns>true if the save was successful</returns>
         private bool SaveAsProject()
         {
             string json = SerializeProject();
@@ -320,6 +380,9 @@ namespace Minimal_Video_Editor
 
         private static readonly JsonSerializerOptions jsonDeserilazionOptions = new() { AllowTrailingCommas = true, ReadCommentHandling = JsonCommentHandling.Skip, IncludeFields = true };
 
+        /// <summary>
+        /// Load the project from a project file chosen by the user
+        /// </summary>
         private void LoadProject()
         {
             var d = new OpenFileDialog() { Filter= "Project file|*.mveproj", DefaultExt= ".mveproj", Multiselect=false};
@@ -330,6 +393,10 @@ namespace Minimal_Video_Editor
             }
         }
 
+        /// <summary>
+        /// Load the project from a project file
+        /// </summary>
+        /// <param name="filename">The file's full path</param>
         public void LoadProject(string filename)
         {
             CurrentProjectPath = filename;
@@ -363,6 +430,10 @@ namespace Minimal_Video_Editor
         {
             ImportMedia();
         }
+
+        /// <summary>
+        /// Import in the project a media file chosen by the user
+        /// </summary>
         private void ImportMedia()
         {
             OpenFileDialog opf = new() { Filter = $"Media files|*{string.Join(";*", SupportedExtensions)}", Multiselect = true };
@@ -377,6 +448,11 @@ namespace Minimal_Video_Editor
         }
 
 
+        /// <summary>
+        /// Creates a new project in this window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void NewProjectThisWindowCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             if(HasUnsavedChanges)
@@ -404,6 +480,11 @@ namespace Minimal_Video_Editor
             }
         }
 
+        /// <summary>
+        /// Creates a new project in a new window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void NewProjectNewWindowCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Process process = new();
@@ -416,6 +497,10 @@ namespace Minimal_Video_Editor
             process.Start();
         }
 
+        /// <summary>
+        /// If a media file was deemed missing, this function will prompt the user to fetch it again
+        /// </summary>
+        /// <param name="originalFilename">The media file's full path as it was referenced in the project</param>
         public void RecoverMedia(string originalFilename)
         {
             string originalPath = new FileInfo(originalFilename).DirectoryName ?? "";
@@ -435,6 +520,9 @@ namespace Minimal_Video_Editor
             }
         }
 
+        /// <summary>
+        /// Call this function if you made changes to the project
+        /// </summary>
         public void IHaveMadeChanges()
         {
             HasUnsavedChanges = true;
