@@ -18,15 +18,9 @@ class Project
 
 public class ClipFormat
 {
-    public string Filename { get; set; }
+    public string Filename { get; set; } = string.Empty;
     public double FramesCount { get; set; }
     public double FPS { get; set; }
 
-    public double duration { get; set; }
-
-
-    public ClipFormat()
-    {
-
-    }
+    public double Duration { get; set; }
 }

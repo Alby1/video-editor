@@ -27,7 +27,7 @@ namespace Minimal_Video_Editor
             InitializeComponent();
 
             Filename = clip.Filename;
-            Duration = clip.duration;
+            Duration = clip.Duration;
 
 
             FilenameLabel.Content = Filename;

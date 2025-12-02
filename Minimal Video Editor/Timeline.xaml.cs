@@ -118,7 +118,7 @@ namespace Minimal_Video_Editor
 
             double ms = frames * 1000/FPS;
 
-            ClipFormat clip = new() { Filename=filename, FramesCount = frames, FPS=FPS, duration = ms };
+            ClipFormat clip = new() { Filename=filename, FramesCount = frames, FPS=FPS, Duration = ms };
 
             TimelineStackPanel.Children.Add(new Clip(clip));
 
