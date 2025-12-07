@@ -378,8 +378,6 @@ namespace Minimal_Video_Editor
             return false;
         }
 
-        private static readonly JsonSerializerOptions jsonDeserilazionOptions = new() { AllowTrailingCommas = true, ReadCommentHandling = JsonCommentHandling.Skip, IncludeFields = true };
-
         /// <summary>
         /// Load the project from a project file chosen by the user
         /// </summary>
@@ -404,9 +402,7 @@ namespace Minimal_Video_Editor
             FileLoaderWrapPanel.Children.Clear();
             NoFilesInFileLoaderLabel.Visibility = Visibility.Visible;
 
-            var json = File.ReadAllText(filename);
-
-            project = JsonSerializer.Deserialize<Project>(json, jsonDeserilazionOptions)!;
+            project = ProjectLoader.Load(filename);
 
             project.files.ForEach(f => { LoadFile(f); });
 
