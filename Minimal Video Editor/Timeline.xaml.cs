@@ -120,7 +120,7 @@ namespace Minimal_Video_Editor
 
             ClipFormat clip = new() { Filename=filename, FramesCount = frames, FPS=FPS, Duration = ms };
 
-            TimelineStackPanel.Children.Add(new Clip(clip));
+            TimelineStackPanel.Children.Add(new Clip(clip, this));
 
             mainwindow.AddClip(clip);
 
@@ -134,6 +134,19 @@ namespace Minimal_Video_Editor
             TimelineStackPanel.Children.Clear();
             UpdateTicks();
             ScaleX = defaultScale;
+        }
+
+        public void MoveClip(Clip moving, Clip pivot, bool right)
+        {
+            if (moving == pivot) return;
+
+
+            TimelineStackPanel.Children.Remove(moving);
+
+            int id = TimelineStackPanel.Children.IndexOf(pivot);
+
+            int righter = right ? 1 : 0;
+            TimelineStackPanel.Children.Insert(id + righter, moving);
         }
     }
 }

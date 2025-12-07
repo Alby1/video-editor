@@ -11,27 +11,52 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Minimal_Video_Editor
+namespace Minimal_Video_Editor;
+
+/// <summary>
+/// Interaction logic for Clip.xaml
+/// </summary>
+public partial class Clip : UserControl
 {
-    /// <summary>
-    /// Interaction logic for Clip.xaml
-    /// </summary>
-    public partial class Clip : UserControl
+    public string Filename { get; init; } = null!;
+
+    public double Duration { get; init; } = 0d;
+
+    public double Start {get; init;} = 0d;
+
+    private Timeline Timeline {get; init;}
+
+    public Clip(ClipFormat clip, Timeline tl)
     {
-        public string Filename { get; init; } = null!;
+        InitializeComponent();
 
-        public double Duration { get; init; } = 0d;
+        Filename = clip.Filename;
+        Duration = clip.Duration;
+        Timeline = tl;
 
-        public Clip(ClipFormat clip)
+
+        FilenameLabel.Content = Filename;
+        MainGrid.Width = Duration / 1000 * Timeline.PixelPerSecond;
+    }
+
+    private void Clip_PreviewMouseMove(object sender, MouseEventArgs e)
+    {
+        if (e.LeftButton != MouseButtonState.Pressed) return;
+
+        DragDrop.DoDragDrop(this, this, DragDropEffects.Move);
+    }
+
+    private void Clip_Drop(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(typeof(Clip)))
         {
-            InitializeComponent();
+            Clip from = (Clip)e.Data.GetData(typeof(Clip));
+        
+            Point mouse = e.GetPosition(this);
 
-            Filename = clip.Filename;
-            Duration = clip.Duration;
+            bool right = mouse.X > MainGrid.ActualWidth / 2;
 
-
-            FilenameLabel.Content = Filename;
-            MainGrid.Width = Duration / 1000 * Timeline.PixelPerSecond;
+            Timeline.MoveClip(from, this, right);
         }
     }
 }
