@@ -50,29 +50,29 @@ enum ProjectVersions
 
 class ProjectLoader
 {
-    private static readonly JsonSerializerOptions jsonDeserilazionOptions = new() { AllowTrailingCommas = true, ReadCommentHandling = JsonCommentHandling.Skip, IncludeFields = true };
+    private static readonly JsonSerializerOptions jsonDeserializationOptions = new() { AllowTrailingCommas = true, ReadCommentHandling = JsonCommentHandling.Skip, IncludeFields = true };
 
     public static Project Load(string filename)
     {
         var json = File.ReadAllText(filename);
 
-        ProjectVersions version = (JsonSerializer.Deserialize<ProjectVersion>(json, jsonDeserilazionOptions)).version;
+        ProjectVersions version = (JsonSerializer.Deserialize<ProjectVersion>(json, jsonDeserializationOptions)).version;
 
         switch (version)
         {
             case ProjectVersions.DB6:
                 {
-                    ProjectLegacyVDB6 project = JsonSerializer.Deserialize<ProjectLegacyVDB6>(json, jsonDeserilazionOptions)!;
+                    ProjectLegacyVDB6 project = JsonSerializer.Deserialize<ProjectLegacyVDB6>(json, jsonDeserializationOptions)!;
                     return project.migrate();
                 }
                 
             case Project.latest:
                 {
-                    return JsonSerializer.Deserialize<Project>(json, jsonDeserilazionOptions)!;
+                    return JsonSerializer.Deserialize<Project>(json, jsonDeserializationOptions)!;
                 }
             default:
                 {
-                    ProjectLegacyVDB6 project = JsonSerializer.Deserialize<ProjectLegacyVDB6>(json, jsonDeserilazionOptions)!;
+                    ProjectLegacyVDB6 project = JsonSerializer.Deserialize<ProjectLegacyVDB6>(json, jsonDeserializationOptions)!;
                     return project.migrate();
                 }
         }
