@@ -14,12 +14,21 @@ class Project
 {
     public ProjectVersions version = latest;
 
-    public List<string> files = [];
+    public Dictionary<Guid, string> files = [];
 
     public List<ClipFormat> clips = [];
 
     [JsonIgnore]
-    public const ProjectVersions latest = ProjectVersions.DB7;
+    public const ProjectVersions latest = ProjectVersions.DB8;
+}
+
+class ProjectLegacyVDB7
+{
+    public ProjectVersions version = ProjectVersions.DB7;
+
+    public List<string> files = [];
+
+    public List<ClipFormat> clips = [];
 }
 
 class ProjectLegacyVDB6
@@ -27,11 +36,6 @@ class ProjectLegacyVDB6
     public List<string> files = [];
 
     public List<ClipFormat> clips = [];
-
-    public Project migrate()
-    {
-        return new() {files=files, clips=clips};
-    }
 }
 
 
@@ -46,6 +50,7 @@ enum ProjectVersions
 {
     DB6 = 0,
     DB7 = 1, // introdotte le versioni
+    DB8 = 2, // clips reference a file
 }
 
 class ProjectLoader
@@ -63,7 +68,7 @@ class ProjectLoader
             case ProjectVersions.DB6:
                 {
                     ProjectLegacyVDB6 project = JsonSerializer.Deserialize<ProjectLegacyVDB6>(json, jsonDeserializationOptions)!;
-                    return project.migrate();
+                    return ProjectMigrations.Migrate(project);
                 }
                 
             case Project.latest:
@@ -73,21 +78,47 @@ class ProjectLoader
             default:
                 {
                     ProjectLegacyVDB6 project = JsonSerializer.Deserialize<ProjectLegacyVDB6>(json, jsonDeserializationOptions)!;
-                    return project.migrate();
+                    return ProjectMigrations.Migrate(project);
                 }
         }
-        
+
         
     }
 }
+
+
+static class ProjectMigrations
+{
+    public static Project Migrate(ProjectLegacyVDB6 input)
+    {
+        var next1 = new ProjectLegacyVDB7() { clips = input.clips, files = input.files };
+        return Migrate(next1);
+    }
+    public static Project Migrate(ProjectLegacyVDB7 input)
+    {
+        Dictionary<Guid, string> files = [];
+        for (int i = 0; i < input.files.Count; i++)
+        {
+            files.Add(Guid.NewGuid(), input.files[i]);
+        }
+        var next1 = new Project() { clips = input.clips, files=files };
+
+        return next1;
+    }
+}
+
 
 
 
 public class ClipFormat
 {
     public string Filename { get; set; } = string.Empty;
+
+    public int References { get; set; }
+
     public double FramesCount { get; set; }
     public double FPS { get; set; }
 
     public double Duration { get; set; }
 }
+

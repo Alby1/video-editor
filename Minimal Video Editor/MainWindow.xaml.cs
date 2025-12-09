@@ -120,7 +120,11 @@ namespace Minimal_Video_Editor
         /// <param name="Filename">The file's full path</param>
         public void RemoveFile(string Filename)
         {
-            project.files.Remove(Filename);
+            //TOFIX: this function
+            // does it really delete?
+            return;
+
+            //project.files.Remove(Filename);
 
             var toremove = FileLoaderWrapPanel.Children
                 .OfType<FilePreview>()
@@ -301,11 +305,11 @@ namespace Minimal_Video_Editor
         /// <param name="Filename">File's full path</param>
         private void AddFile(string Filename)
         {
-            bool notadded = !project.files.Contains(Filename);
+            bool notadded = !project.files.ContainsValue(Filename);
             if (notadded)
             {
                 LoadFile(Filename);
-                project.files.Add(Filename);
+                project.files.Add(Guid.NewGuid(), Filename);
                 HasUnsavedChanges = true;
             }
             else { MessageBox.Show("\"" + Filename + "\" was already added to this project.", "File Already Added Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
@@ -401,7 +405,7 @@ namespace Minimal_Video_Editor
 
             project = ProjectLoader.Load(filename);
 
-            project.files.ForEach(f => { LoadFile(f); });
+            project.files.Values.ToList().ForEach(LoadFile);
 
             HasUnsavedChanges = false;
         }
@@ -493,19 +497,23 @@ namespace Minimal_Video_Editor
         /// <summary>
         /// If a media file was deemed missing, this function will prompt the user to fetch it again
         /// </summary>
-        /// <param name="originalFilename">The media file's full path as it was referenced in the project</param>
-        public void RecoverMedia(string originalFilename)
+        /// <param name="originalFile">The media file's key as it was referenced in the project</param>
+        public void RecoverMedia(Guid originalFile)
         {
-            string originalPath = new FileInfo(originalFilename).DirectoryName ?? "";
+            string originalPath = new FileInfo(project.files[originalFile]).DirectoryName ?? "";
+            
             OpenFileDialog opf = new() { Filter = $"Media files|*{string.Join(";*", SupportedExtensions)}", Multiselect = false, InitialDirectory=originalPath };
 
             if (opf.ShowDialog() ?? false)
             {
-                RemoveFile(originalFilename);
+                bool notadded = !project.files.ContainsValue(opf.FileName);
 
-                AddFile(opf.FileName);
+                if(notadded)
+                {
+                    project.files[originalFile] = opf.FileName;
+                }
 
-                if(MessageBox.Show("File recovered!\nDo you want to save the project now?",
+                if (MessageBox.Show("File recovered!\nDo you want to save the project now?",
                 "Recovery completed", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     SaveProject();

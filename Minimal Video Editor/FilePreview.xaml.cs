@@ -26,6 +26,8 @@ namespace Minimal_Video_Editor
     {
         public string Filename;
 
+        public Guid key;
+
         private bool FileExists;
 
         private readonly MainWindow mainwindow;
@@ -67,6 +69,7 @@ namespace Minimal_Video_Editor
 
         private void SourceVideoRemoveFromProject_Click(object sender, RoutedEventArgs e)
         {
+            return;
             if (MessageBox.Show("Are you sure you want to remove " + Filename + " from this project?", "Are you sure?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 mainwindow.RemoveFile(Filename);
@@ -88,7 +91,7 @@ namespace Minimal_Video_Editor
         {
             if (FileExists) return;
 
-            mainwindow.RecoverMedia(Filename);
+            mainwindow.RecoverMedia(key);
         }
     }
 }

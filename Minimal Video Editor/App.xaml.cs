@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Principal;
+using System.Text.Json;
 using System.Windows;
 
 namespace Minimal_Video_Editor;
@@ -18,7 +19,7 @@ public partial class App : Application
 {
     private void Application_Startup(object sender, StartupEventArgs e)
     {
-        if(!Settings.Default.RegEdited)
+        if (!Settings.Default.RegEdited)
         {
             try
             {
@@ -52,4 +53,3 @@ public partial class App : Application
         mw.Show();
     }
 }
-
