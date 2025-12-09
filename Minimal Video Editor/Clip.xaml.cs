@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,20 +44,65 @@ public partial class Clip : UserControl
     {
         if (e.LeftButton != MouseButtonState.Pressed) return;
 
+        MainGrid.Opacity = 0.7;
+
         DragDrop.DoDragDrop(this, this, DragDropEffects.Move);
+
+        MainGrid.Opacity = 1;
     }
 
     private void Clip_Drop(object sender, DragEventArgs e)
     {
-        if (e.Data.GetDataPresent(typeof(Clip)))
+        if (!e.Data.GetDataPresent(typeof(Clip))) return;
+       
+        Clip from = (Clip)e.Data.GetData(typeof(Clip));
+
+        Timeline.MoveClip(from, this, GetSide(e));
+
+        HideSideIndicators();
+    }
+
+    private void HideSideIndicators()
+    {
+        ClipMovingDropSideLeftIndicatorGrid.Visibility = Visibility.Hidden;
+        ClipMovingDropSideRightIndicatorGrid.Visibility = Visibility.Hidden;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>True if on the right side</returns>
+    private bool GetSide(DragEventArgs e)
+    {
+        Point mouse = e.GetPosition(this);
+
+        bool right = mouse.X > MainGrid.ActualWidth / 2;
+
+        return right;
+    }
+
+    private void UserControl_PreviewDragOver(object sender, DragEventArgs e)
+    {
+        if (!e.Data.GetDataPresent(typeof(Clip))) return;
+
+        Clip from = (Clip)e.Data.GetData(typeof(Clip));
+
+        if (this == from) return;
+
+        if (GetSide(e)) // if right
         {
-            Clip from = (Clip)e.Data.GetData(typeof(Clip));
-        
-            Point mouse = e.GetPosition(this);
-
-            bool right = mouse.X > MainGrid.ActualWidth / 2;
-
-            Timeline.MoveClip(from, this, right);
+            ClipMovingDropSideRightIndicatorGrid.Visibility = Visibility.Visible;
+            ClipMovingDropSideLeftIndicatorGrid.Visibility = Visibility.Hidden;
         }
+        else
+        {
+            ClipMovingDropSideRightIndicatorGrid.Visibility = Visibility.Hidden;
+            ClipMovingDropSideLeftIndicatorGrid.Visibility = Visibility.Visible;
+        }
+    }
+
+    private void UserControl_DragLeave(object sender, DragEventArgs e)
+    {
+        HideSideIndicators();
     }
 }

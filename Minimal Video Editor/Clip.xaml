@@ -7,23 +7,35 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              PreviewMouseMove="Clip_PreviewMouseMove"
-             Drop="Clip_Drop" AllowDrop="True">
+             Drop="Clip_Drop" AllowDrop="True" PreviewDragOver="UserControl_PreviewDragOver" DragLeave="UserControl_DragLeave">
     <Grid x:Name="MainGrid" Background="MediumPurple" >
         <Grid.RowDefinitions>
             <RowDefinition Height="80*"></RowDefinition>
             <RowDefinition Height="20*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <StackPanel> <!--anteprime-->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.ColumnSpan="2"> <!--anteprime-->
             <StackPanel.LayoutTransform>
                 <ScaleTransform ScaleX="{Binding InverseScaleX, RelativeSource={RelativeSource AncestorType=local:Timeline, AncestorLevel=1}}"></ScaleTransform>
             </StackPanel.LayoutTransform>
         </StackPanel>
 
-        <Label x:Name="FilenameLabel" Grid.Row="1">
+        <Label x:Name="FilenameLabel" Grid.Row="1" Grid.ColumnSpan="2">
             <Label.LayoutTransform>
                 <ScaleTransform ScaleX="{Binding InverseScaleX, RelativeSource={RelativeSource AncestorType=local:Timeline, AncestorLevel=1}}"></ScaleTransform>
             </Label.LayoutTransform>
         </Label>
+
+        <Grid x:Name="ClipMovingDropSideLeftIndicatorGrid" Grid.RowSpan="2" Panel.ZIndex="10" Grid.Column="0" Visibility="Hidden" Background="DarkCyan" IsHitTestVisible="False" Opacity="0.5">
+            
+        </Grid>
+        <Grid x:Name="ClipMovingDropSideRightIndicatorGrid" Grid.RowSpan="2" Panel.ZIndex="10" Grid.Column="1" Visibility="Hidden" Background="DarkCyan" IsHitTestVisible="False" Opacity="0.5">
+            
+        </Grid>
     </Grid>
 </UserControl>
