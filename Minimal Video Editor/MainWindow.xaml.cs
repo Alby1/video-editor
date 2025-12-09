@@ -26,9 +26,6 @@ using System.Windows.Threading;
 
 namespace Minimal_Video_Editor
 {
-
-
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -466,14 +463,14 @@ namespace Minimal_Video_Editor
                     if (!SaveProject()) return;
                 }
                 // if No: proceed without saving
-
-                project = new Project();
-                CurrentProjectPath = null!;
-                Timeline.Clear();
-                FileLoaderWrapPanel.Children.Clear();
-                NoFilesInFileLoaderLabel.Visibility = Visibility.Visible;
-                HasUnsavedChanges = false;
             }
+
+            project = new Project();
+            CurrentProjectPath = null!;
+            Timeline.Clear();
+            FileLoaderWrapPanel.Children.Clear();
+            NoFilesInFileLoaderLabel.Visibility = Visibility.Visible;
+            HasUnsavedChanges = false;
         }
 
         /// <summary>
