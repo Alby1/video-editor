@@ -10,7 +10,7 @@
              MouseLeftButtonDown="UserControl_MouseLeftButtonDown"
              >
     <Border BorderThickness="1" BorderBrush="DarkGray">
-        <Grid Background="black">
+        <Grid x:Name="MainGrid" Background="black">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition Height="20"></RowDefinition>

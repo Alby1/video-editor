@@ -77,7 +77,11 @@ namespace Minimal_Video_Editor
         {
             if (e.LeftButton != MouseButtonState.Pressed || !FileExists) return;
 
+            MainGrid.Opacity = 0.7;
+
             DragDrop.DoDragDrop(this, Filename, DragDropEffects.Move);
+            
+            MainGrid.Opacity = 1;
         }
 
         private void UserControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
