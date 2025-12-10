@@ -113,22 +113,31 @@ namespace Minimal_Video_Editor
 
             (Guid reference, string filename) = (Tuple<Guid, string>)e.Data.GetData(typeof(Tuple));
 
+            mainwindow.AddClip(AddClip(reference, filename));
 
+            mainwindow.IHaveMadeChanges();
+        }
+
+        private ClipFormat AddClip(Guid reference, string filename)
+        {
             VideoCapture captureFrame = new(filename);
             double FPS = captureFrame.Get(Emgu.CV.CvEnum.CapProp.Fps);
             double frames = captureFrame.Get(Emgu.CV.CvEnum.CapProp.FrameCount);
 
-            double ms = frames * 1000/FPS;
+            double ms = frames * 1000 / FPS;
 
-            ClipFormat clip = new() { Reference=reference, FramesCount = frames, FPS=FPS, Duration = ms };
+            ClipFormat clip = new() { Reference = reference, FramesCount = frames, FPS = FPS, Duration = ms };
 
+            AddClip(clip);
+
+            return clip;
+        }
+
+        public void AddClip(ClipFormat clip)
+        {
             TimelineStackPanel.Children.Add(new Clip(clip, this));
 
-            mainwindow.AddClip(clip);
-
             UpdateTicks();
-
-            mainwindow.IHaveMadeChanges();
         }
 
         public void Clear()

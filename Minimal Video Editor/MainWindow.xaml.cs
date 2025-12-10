@@ -416,6 +416,8 @@ namespace Minimal_Video_Editor
 
             project.files.ToList().ForEach(LoadFile);
 
+            project.clips.ToList().ForEach(Timeline.AddClip);
+
             HasUnsavedChanges = false;
         }
 
