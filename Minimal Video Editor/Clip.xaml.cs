@@ -19,11 +19,7 @@ namespace Minimal_Video_Editor;
 /// </summary>
 public partial class Clip : UserControl
 {
-    public string Filename { get; init; } = null!;
-
-    public double Duration { get; init; } = 0d;
-
-    public double Start {get; init;} = 0d;
+    private readonly ClipFormat clipData;
 
     private Timeline Timeline {get; init;}
 
@@ -31,13 +27,12 @@ public partial class Clip : UserControl
     {
         InitializeComponent();
 
-        Filename = clip.Filename;
-        Duration = clip.Duration;
+        clipData = clip;
         Timeline = tl;
 
 
-        FilenameLabel.Content = Filename;
-        MainGrid.Width = Duration / 1000 * Timeline.PixelPerSecond;
+        FilenameLabel.Content = clipData.Filename(tl.Project);
+        MainGrid.Width = clipData.Duration / 1000 * Timeline.PixelPerSecond;
     }
 
     private void Clip_PreviewMouseMove(object sender, MouseEventArgs e)

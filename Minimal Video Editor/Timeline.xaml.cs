@@ -28,6 +28,8 @@ namespace Minimal_Video_Editor
 
         const double defaultScale = 2d;
 
+        public Project Project { get { return mainwindow.Project; } }
+
         public double ScaleX
         {
             get { return (double)GetValue(ScaleXProperty); }
@@ -107,9 +109,9 @@ namespace Minimal_Video_Editor
 
         private void TimelineStackPanel_Drop(object sender, DragEventArgs e)
         {
-            if (!e.Data.GetDataPresent(DataFormats.Text)) return;
-            
-            string filename = e.Data.GetData(DataFormats.Text).ToString()!;
+            if (!e.Data.GetDataPresent(typeof(Tuple))) return;
+
+            (Guid reference, string filename) = (Tuple<Guid, string>)e.Data.GetData(typeof(Tuple));
 
 
             VideoCapture captureFrame = new(filename);
@@ -118,7 +120,7 @@ namespace Minimal_Video_Editor
 
             double ms = frames * 1000/FPS;
 
-            ClipFormat clip = new() { Filename=filename, FramesCount = frames, FPS=FPS, Duration = ms };
+            ClipFormat clip = new() { Reference=reference, FramesCount = frames, FPS=FPS, Duration = ms };
 
             TimelineStackPanel.Children.Add(new Clip(clip, this));
 

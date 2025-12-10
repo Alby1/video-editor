@@ -26,15 +26,16 @@ namespace Minimal_Video_Editor
     {
         public string Filename;
 
-        public Guid key;
+        public Guid Key;
 
-        private bool FileExists;
+        private readonly bool FileExists;
 
         private readonly MainWindow mainwindow;
-        public FilePreview(string filename)
+        public FilePreview(string filename, Guid key)
         {
             InitializeComponent();
             Filename = filename;
+            Key = key;
 
             FileExists = File.Exists(Filename);
 
@@ -82,7 +83,7 @@ namespace Minimal_Video_Editor
 
             MainGrid.Opacity = 0.7;
 
-            DragDrop.DoDragDrop(this, Filename, DragDropEffects.Move);
+            DragDrop.DoDragDrop(this, (Key, Filename), DragDropEffects.Move);
             
             MainGrid.Opacity = 1;
         }
@@ -91,7 +92,7 @@ namespace Minimal_Video_Editor
         {
             if (FileExists) return;
 
-            mainwindow.RecoverMedia(key);
+            mainwindow.RecoverMedia(Key);
         }
     }
 }

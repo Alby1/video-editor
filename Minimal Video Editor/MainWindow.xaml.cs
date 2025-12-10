@@ -43,6 +43,8 @@ namespace Minimal_Video_Editor
 
         private Project project = new();
 
+        public Project Project { get { return project; } }
+
         private string CurrentProjectPath { get => field; set { field = value; SetWindowTitle(); } } = null!;
 
 
@@ -265,11 +267,17 @@ namespace Minimal_Video_Editor
         /// Load a file into the FileLoader
         /// </summary>
         /// <param name="Filename">Full file's path</param>
-        private void LoadFile(string Filename)
+        /// <param name="key">File's key for reference to the project files</param>
+        private void LoadFile(string Filename, Guid key)
         {
-            FileLoaderWrapPanel.Children.Add(new FilePreview(Filename));
+            FileLoaderWrapPanel.Children.Add(new FilePreview(Filename, key));
 
             NoFilesInFileLoaderLabel.Visibility = Visibility.Collapsed;
+        }
+
+        private void LoadFile(KeyValuePair<Guid, string> ziopair)
+        {
+            LoadFile(ziopair.Value, ziopair.Key);
         }
 
         private static readonly string[] SupportedExtensions = [".mp4", ".mkv"];
@@ -308,8 +316,9 @@ namespace Minimal_Video_Editor
             bool notadded = !project.files.ContainsValue(Filename);
             if (notadded)
             {
-                LoadFile(Filename);
-                project.files.Add(Guid.NewGuid(), Filename);
+                Guid guid = Guid.NewGuid();
+                LoadFile(Filename, guid);
+                project.files.Add(guid, Filename);
                 HasUnsavedChanges = true;
             }
             else { MessageBox.Show("\"" + Filename + "\" was already added to this project.", "File Already Added Warning", MessageBoxButton.OK, MessageBoxImage.Warning); }
@@ -405,7 +414,7 @@ namespace Minimal_Video_Editor
 
             project = ProjectLoader.Load(filename);
 
-            project.files.Values.ToList().ForEach(LoadFile);
+            project.files.ToList().ForEach(LoadFile);
 
             HasUnsavedChanges = false;
         }

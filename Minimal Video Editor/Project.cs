@@ -10,16 +10,14 @@ using System.IO;
 
 namespace Minimal_Video_Editor;
 
-class Project
+public class Project
 {
-    public ProjectVersions version = latest;
+    public ProjectVersions version = ProjectVersion.latest;
 
     public Dictionary<Guid, string> files = [];
 
     public List<ClipFormat> clips = [];
-
-    [JsonIgnore]
-    public const ProjectVersions latest = ProjectVersions.DB8;
+        
 }
 
 class ProjectLegacyVDB7
@@ -41,12 +39,14 @@ class ProjectLegacyVDB6
 
 
 
-class ProjectVersion
+public class ProjectVersion
 {
     public ProjectVersions version = 0;
+    [JsonIgnore]
+    public const ProjectVersions latest = ProjectVersions.DB8;
 } 
 
-enum ProjectVersions
+public enum ProjectVersions
 {
     DB6 = 0,
     DB7 = 1, // introdotte le versioni
@@ -61,7 +61,7 @@ class ProjectLoader
     {
         var json = File.ReadAllText(filename);
 
-        ProjectVersions version = (JsonSerializer.Deserialize<ProjectVersion>(json, jsonDeserializationOptions)).version;
+        ProjectVersions version = (JsonSerializer.Deserialize<ProjectVersion>(json, jsonDeserializationOptions)!).version;
 
         switch (version)
         {
@@ -70,8 +70,12 @@ class ProjectLoader
                     ProjectLegacyVDB6 project = JsonSerializer.Deserialize<ProjectLegacyVDB6>(json, jsonDeserializationOptions)!;
                     return ProjectMigrations.Migrate(project);
                 }
-                
-            case Project.latest:
+            case ProjectVersions.DB7:
+                {
+                    ProjectLegacyVDB7 project = JsonSerializer.Deserialize<ProjectLegacyVDB7>(json, jsonDeserializationOptions)!;
+                    return ProjectMigrations.Migrate(project);
+                }
+            case ProjectVersion.latest:
                 {
                     return JsonSerializer.Deserialize<Project>(json, jsonDeserializationOptions)!;
                 }
@@ -81,8 +85,6 @@ class ProjectLoader
                     return ProjectMigrations.Migrate(project);
                 }
         }
-
-        
     }
 }
 
@@ -112,13 +114,17 @@ static class ProjectMigrations
 
 public class ClipFormat
 {
-    public string Filename { get; set; } = string.Empty;
-
-    public int References { get; set; }
+    public Guid Reference { get; set; }
 
     public double FramesCount { get; set; }
+
     public double FPS { get; set; }
 
     public double Duration { get; set; }
+
+    public string Filename(Project project)
+    {
+        return project.files[Reference];
+    }
 }
 
