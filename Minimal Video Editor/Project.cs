@@ -26,14 +26,14 @@ class ProjectLegacyVDB7
 
     public List<string> files = [];
 
-    public List<ClipFormat> clips = [];
+    public List<OldClipFormat> clips = [];
 }
 
 class ProjectLegacyVDB6
 {
     public List<string> files = [];
 
-    public List<ClipFormat> clips = [];
+    public List<OldClipFormat> clips = [];
 }
 
 
@@ -99,11 +99,21 @@ static class ProjectMigrations
     public static Project Migrate(ProjectLegacyVDB7 input)
     {
         Dictionary<Guid, string> files = [];
+        Dictionary<string, Guid> searchFiles = [];
         for (int i = 0; i < input.files.Count; i++)
         {
-            files.Add(Guid.NewGuid(), input.files[i]);
+            Guid guid = Guid.NewGuid();
+            files.Add(guid, input.files[i]);
+            searchFiles.Add(input.files[i], guid);
         }
-        var next1 = new Project() { clips = input.clips, files=files };
+        List<ClipFormat> clips = [];
+
+        foreach (var oldClip in input.clips)
+        {
+            clips.Add(new ClipFormat() { Duration = oldClip.Duration, FPS = oldClip.FPS, FramesCount = oldClip.FramesCount, Reference = searchFiles[oldClip.Filename] });
+        }
+
+        var next1 = new Project() { clips = clips, files=files };
 
         return next1;
     }
@@ -126,5 +136,16 @@ public class ClipFormat
     {
         return project.files[Reference];
     }
+}
+
+
+public class OldClipFormat
+{
+    public string Filename { get; set; } = string.Empty;
+    public double FramesCount { get; set; }
+
+    public double FPS { get; set; }
+
+    public double Duration { get; set; }
 }
 
