@@ -55,7 +55,7 @@ namespace Minimal_Video_Editor
             DependencyProperty.Register("TicksMargin", typeof(Thickness), typeof(Timeline), new PropertyMetadata(default));
 
         public const int PixelPerSecond = 30;
-        private const int TickThickness = 1;
+        private const int TickThickness = 3;
 
         //timelinewidth / pixelpersecond = visibleseconds
 
@@ -63,9 +63,14 @@ namespace Minimal_Video_Editor
         {
             InitializeComponent();
 
-            TicksMargin = new((PixelPerSecond - TickThickness) * ScaleX, 0, 0, 0);
+            UpdateTicksSize();
 
             mainwindow = (MainWindow)Application.Current.MainWindow;
+        }
+
+        private void UpdateTicksSize()
+        {
+            TicksMargin = new((PixelPerSecond * ScaleX) - TickThickness, 0, 0, 0);
         }
 
         private void UserControl_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -76,8 +81,7 @@ namespace Minimal_Video_Editor
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 ScaleX = Math.Clamp(ScaleX + e.Delta / pxToScale, 0.5, 10);
-                TicksMargin = new((PixelPerSecond - TickThickness) * ScaleX, 0, 0, 0);
-                
+                UpdateTicksSize();
             }
 
             else
@@ -95,11 +99,11 @@ namespace Minimal_Video_Editor
         {
             TicksStackPanel.Children.Clear();
 
-            int visibleseconds = (int)(TimelineStackPanel.ActualWidth / PixelPerSecond);
+            double visibleseconds = Project.clips.Count != 0 ? Project.clips.Sum(clip => clip.Duration) / 1000 : this.ActualWidth / PixelPerSecond; 
 
             Binding binbin = new() { Source = this, Path = new("TicksMargin"), Mode = BindingMode.TwoWay };
 
-            for (int i = 0; i < visibleseconds + 1; i++)
+            for (int i = 0; i < (int)visibleseconds + 1; i++)
             {
                 Rectangle rect = new() { Width = TickThickness, Margin = TicksMargin, Fill = Brushes.DodgerBlue };
                 BindingOperations.SetBinding(rect, Rectangle.MarginProperty, binbin);

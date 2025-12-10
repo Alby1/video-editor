@@ -10,19 +10,20 @@
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              Loaded="UserControl_Loaded"
              >
-    
-    <DockPanel>
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Height="20" x:Name="TicksStackPanel">
-            
-        </StackPanel>
+
+    <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" PreviewMouseWheel="UserControl_MouseWheel" x:Name="TimelineScrollViewer" Drop="TimelineStackPanel_Drop" AllowDrop="True">
-            <StackPanel Orientation="Horizontal" x:Name="TimelineStackPanel">
-                <StackPanel.LayoutTransform>
-                    <ScaleTransform ScaleX="{Binding Path=ScaleX}"></ScaleTransform>
-                </StackPanel.LayoutTransform>
-            </StackPanel>
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Height="20" x:Name="TicksStackPanel">
+
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" x:Name="TimelineStackPanel">
+                    <StackPanel.LayoutTransform>
+                        <ScaleTransform ScaleX="{Binding Path=ScaleX}"></ScaleTransform>
+                    </StackPanel.LayoutTransform>
+                </StackPanel>
+
+            </DockPanel>
         </ScrollViewer>
-        
-        
-    </DockPanel>
+    </Grid>
 </UserControl>
