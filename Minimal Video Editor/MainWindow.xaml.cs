@@ -26,18 +26,26 @@ using System.Windows.Threading;
 
 namespace Minimal_Video_Editor
 {
+    public enum ToolSelection
+    {
+        None = 0,
+        Select = 1,
+        Cut = 2,
+    }
+
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        public int CurrentlySelectedTool
+        public ToolSelection CurrentlySelectedTool
         {
-            get { return (int)GetValue(CurrentlySelectedToolProperty); }
-            set { SetValue(CurrentlySelectedToolProperty, value); }
+            get { return (ToolSelection)GetValue(CurrentlySelectedToolProperty); }
+            set { SetValue(CurrentlySelectedToolProperty, value); Debug.WriteLine(value); }
         }
-        public static readonly DependencyProperty CurrentlySelectedToolProperty =
-            DependencyProperty.Register("CurrentlySelectedTool", typeof(int), typeof(MainWindow), new PropertyMetadata(1));
+        public static readonly DependencyProperty CurrentlySelectedToolProperty = 
+            DependencyProperty.Register("CurrentlySelectedTool", typeof(ToolSelection), typeof(MainWindow), new PropertyMetadata(ToolSelection.Select));
 
 
 
@@ -179,12 +187,12 @@ namespace Minimal_Video_Editor
 
         private void SelectionTool_Checked(object sender, RoutedEventArgs e)
         {
-            CurrentlySelectedTool = 0;
+            CurrentlySelectedTool = ToolSelection.Select;
         }
 
         private void CuttingTool_Checked(object sender, RoutedEventArgs e)
         {
-            CurrentlySelectedTool = 1;
+            CurrentlySelectedTool = ToolSelection.Cut;
         }
 
         /// <summary>

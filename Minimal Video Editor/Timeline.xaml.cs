@@ -30,6 +30,8 @@ namespace Minimal_Video_Editor
 
         public Project Project { get { return mainwindow.Project; } }
 
+        public ToolSelection CurrentlySelectedTool { get { return mainwindow.CurrentlySelectedTool; } }
+
         public double ScaleX
         {
             get { return (double)GetValue(ScaleXProperty); }
