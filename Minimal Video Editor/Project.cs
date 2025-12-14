@@ -124,14 +124,31 @@ static class ProjectMigrations
 
 public class ClipFormat
 {
+    /// <summary>
+    /// Reference to the file in the project
+    /// </summary>
     public Guid Reference { get; set; }
 
+    /// <summary>
+    /// Number of frames in this clip
+    /// </summary>
     public double FramesCount { get; set; }
 
+    /// <summary>
+    /// Frames Per Second
+    /// </summary>
     public double FPS { get; set; }
 
+    /// <summary>
+    /// Duration of this clip in milliseconds
+    /// </summary>
     public double Duration { get; set; }
 
+    /// <summary>
+    /// Get the filename from the project
+    /// </summary>
+    /// <param name="project">Reference to the project</param>
+    /// <returns>Filename</returns>
     public string Filename(Project project)
     {
         return project.files[Reference];

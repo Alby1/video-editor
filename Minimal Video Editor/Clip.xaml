@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              PreviewMouseMove="Clip_PreviewMouseMove"
-             Drop="Clip_Drop" AllowDrop="True" PreviewDragOver="UserControl_PreviewDragOver" DragLeave="UserControl_DragLeave">
+             Drop="Clip_Drop" AllowDrop="True" PreviewDragOver="UserControl_PreviewDragOver" DragLeave="UserControl_DragLeave" MouseLeave="UserControl_MouseLeave">
     <Grid x:Name="MainGrid" Background="MediumPurple" >
         <Grid.RowDefinitions>
             <RowDefinition Height="80*"></RowDefinition>
@@ -36,6 +36,12 @@
         </Grid>
         <Grid x:Name="ClipMovingDropSideRightIndicatorGrid" Grid.RowSpan="2" Panel.ZIndex="10" Grid.Column="1" Visibility="Hidden" Background="DarkCyan" IsHitTestVisible="False" Opacity="0.5">
             
+        </Grid>
+
+        <Grid x:Name="CutIndicatorGrid" Grid.RowSpan="2" Grid.ColumnSpan="2" Width="5" Margin="0,0,0,0" HorizontalAlignment="Left" Background="Black" Visibility="Hidden">
+            <Grid.LayoutTransform>
+                <ScaleTransform ScaleX="{Binding InverseScaleX, RelativeSource={RelativeSource AncestorType=local:Timeline, AncestorLevel=1}}"></ScaleTransform>
+            </Grid.LayoutTransform>
         </Grid>
     </Grid>
 </UserControl>

@@ -37,15 +37,24 @@ public partial class Clip : UserControl
 
     private void Clip_PreviewMouseMove(object sender, MouseEventArgs e)
     {
-        if (e.LeftButton != MouseButtonState.Pressed) return;
+        if (Timeline.CurrentlySelectedTool == ToolSelection.Select) /* Do drag and drop */
+        {
+            if (e.LeftButton != MouseButtonState.Pressed) return;
 
-        if (Timeline.CurrentlySelectedTool != ToolSelection.Select) return;
+            MainGrid.Opacity = 0.7;
 
-        MainGrid.Opacity = 0.7;
+            DragDrop.DoDragDrop(this, this, DragDropEffects.Move);
 
-        DragDrop.DoDragDrop(this, this, DragDropEffects.Move);
+            MainGrid.Opacity = 1;
+        }
+        else if (Timeline.CurrentlySelectedTool == ToolSelection.Cut) /* Cut clip */
+        {
+            Point mouse = e.GetPosition(this);
 
-        MainGrid.Opacity = 1;
+            CutIndicatorGrid.Visibility = Visibility.Visible;
+
+            CutIndicatorGrid.Margin = new Thickness(mouse.X, 0, 0, 0);
+        }
     }
 
     private void Clip_Drop(object sender, DragEventArgs e)
@@ -101,5 +110,10 @@ public partial class Clip : UserControl
     private void UserControl_DragLeave(object sender, DragEventArgs e)
     {
         HideSideIndicators();
+    }
+
+    private void UserControl_MouseLeave(object sender, MouseEventArgs e)
+    {
+        CutIndicatorGrid.Visibility = Visibility.Hidden;
     }
 }

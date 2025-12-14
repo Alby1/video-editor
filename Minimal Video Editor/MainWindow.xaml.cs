@@ -42,7 +42,7 @@ namespace Minimal_Video_Editor
         public ToolSelection CurrentlySelectedTool
         {
             get { return (ToolSelection)GetValue(CurrentlySelectedToolProperty); }
-            set { SetValue(CurrentlySelectedToolProperty, value); Debug.WriteLine(value); }
+            set { SetValue(CurrentlySelectedToolProperty, value); }
         }
         public static readonly DependencyProperty CurrentlySelectedToolProperty = 
             DependencyProperty.Register("CurrentlySelectedTool", typeof(ToolSelection), typeof(MainWindow), new PropertyMetadata(ToolSelection.Select));
