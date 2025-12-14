@@ -26,7 +26,11 @@ namespace Minimal_Video_Editor
     {
         private readonly MainWindow mainwindow;
 
-        const double defaultScale = 2d;
+        const double defaultScale = 4d;
+        public const int PixelPerSecond = 10;
+        private const double TickThickness = 1.5;
+
+        //timelinewidth / pixelpersecond = visibleseconds
 
         public Project Project { get { return mainwindow.Project; } }
 
@@ -56,10 +60,6 @@ namespace Minimal_Video_Editor
         public static readonly DependencyProperty TicksMarginProperty =
             DependencyProperty.Register("TicksMargin", typeof(Thickness), typeof(Timeline), new PropertyMetadata(default));
 
-        public const int PixelPerSecond = 30;
-        private const int TickThickness = 3;
-
-        //timelinewidth / pixelpersecond = visibleseconds
 
         public Timeline()
         {
@@ -110,6 +110,11 @@ namespace Minimal_Video_Editor
                 Rectangle rect = new() { Width = TickThickness, Margin = TicksMargin, Fill = Brushes.DodgerBlue };
                 BindingOperations.SetBinding(rect, Rectangle.MarginProperty, binbin);
                 TicksStackPanel.Children.Add(rect);
+
+
+                //Label lb = new() { Margin = new Thickness(TicksMargin.Left - 4, 0, 0, 0), Content = i, Padding = new Thickness(0) };
+                ////BindingOperations.SetBinding(lb, Label.MarginProperty, binbin);
+                //NumbersStackPanel.Children.Add(lb);
             }
         }
 

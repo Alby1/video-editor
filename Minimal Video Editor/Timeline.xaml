@@ -14,6 +14,9 @@
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" PreviewMouseWheel="UserControl_MouseWheel" x:Name="TimelineScrollViewer" Drop="TimelineStackPanel_Drop" AllowDrop="True">
             <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Height="20" x:Name="NumbersStackPanel">
+
+                </StackPanel>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Height="20" x:Name="TicksStackPanel">
 
                 </StackPanel>
