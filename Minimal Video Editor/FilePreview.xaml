@@ -23,6 +23,11 @@
                 <ContextMenu>
                     <MenuItem Header="Preview in player" Click="SourceVideoPlayButton_Click"></MenuItem>
                     <MenuItem Header="Remove from project" Click="SourceVideoRemoveFromProject_Click"></MenuItem>
+                    <MenuItem Header="Open in file explorer" Click="SourceVideoOpenInExplorer_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/assets/folder bg smaller.png" RenderOptions.EdgeMode="Unspecified" RenderOptions.BitmapScalingMode="HighQuality" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </ContextMenu>
             </Grid.ContextMenu>
         </Grid>

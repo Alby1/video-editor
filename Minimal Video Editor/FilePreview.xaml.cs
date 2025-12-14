@@ -2,6 +2,7 @@
 using Microsoft.WindowsAPICodePack.Shell;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -93,6 +94,11 @@ namespace Minimal_Video_Editor
             if (FileExists) return;
 
             mainwindow.RecoverMedia(Key);
+        }
+
+        private void SourceVideoOpenInExplorer_Click(object sender, RoutedEventArgs e)
+        {
+            if (FileExists) Process.Start("explorer.exe", $"/select,\"{Filename}\"");
         }
     }
 }

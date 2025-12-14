@@ -8,7 +8,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/RadiosToTools.xaml"/>
-                <ResourceDictionary Source="/IconLessMenuItem.xaml"/>
+                <!--<ResourceDictionary Source="/IconLessMenuItem.xaml"/>-->
                 <ResourceDictionary Source="/CommonStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
