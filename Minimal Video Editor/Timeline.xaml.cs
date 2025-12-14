@@ -61,6 +61,14 @@ namespace Minimal_Video_Editor
         }
         public static readonly DependencyProperty TicksMarginProperty =
             DependencyProperty.Register("TicksMargin", typeof(Thickness), typeof(Timeline), new PropertyMetadata(default));
+        
+        public double TextSpacing
+        {
+            get { return (double)GetValue(TextSpacingProperty); }
+            set { SetValue(TextSpacingProperty, value); }
+        }
+        public static readonly DependencyProperty TextSpacingProperty =
+            DependencyProperty.Register("TextSpacing", typeof(double), typeof(Timeline), new PropertyMetadata(default));
 
 
         public Timeline()
@@ -75,6 +83,9 @@ namespace Minimal_Video_Editor
         private void UpdateTicksSize()
         {
             TicksMargin = new((PixelPerSecond * ScaleX) - TickThickness, 0, 0, 0);
+            TextSpacing = PixelPerSecond * ScaleX;
+
+            NumbersStackPanel.ShowOneForEach((int)(75 / TextSpacing));
         }
 
         private void UserControl_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -102,6 +113,7 @@ namespace Minimal_Video_Editor
         private void UpdateTicks()
         {
             TicksStackPanel.Children.Clear();
+            NumbersStackPanel.Children.Clear();
 
             double visibleseconds = Project.clips.Count != 0 ? Project.clips.Sum(clip => clip.Duration) / 1000 : this.ActualWidth / PixelPerSecond; 
 
@@ -114,9 +126,9 @@ namespace Minimal_Video_Editor
                 TicksStackPanel.Children.Add(rect);
 
 
-                //Label lb = new() { Margin = new Thickness(TicksMargin.Left - 4, 0, 0, 0), Content = i, Padding = new Thickness(0) };
-                ////BindingOperations.SetBinding(lb, Label.MarginProperty, binbin);
-                //NumbersStackPanel.Children.Add(lb);
+                string time = TimeSpan.FromSeconds(i + 1).ToString("mm':'ss");
+                Label lb = new() { Content = time, Padding = new Thickness(0), FontFamily=new FontFamily("Cascadia Mono") };
+                NumbersStackPanel.Children.Add(lb);
             }
         }
 
@@ -172,5 +184,91 @@ namespace Minimal_Video_Editor
             int righter = right ? 1 : 0;
             TimelineStackPanel.Children.Insert(id + righter, moving);
         }
+    }
+
+
+
+
+    public class CenterSpacedPanel : Panel
+    {
+        public double CenterSpacing
+        {
+            get => (double)GetValue(CenterSpacingProperty);
+            set => SetValue(CenterSpacingProperty, value);
+        }
+
+        public static readonly DependencyProperty CenterSpacingProperty =
+            DependencyProperty.Register(
+                nameof(CenterSpacing),
+                typeof(double),
+                typeof(CenterSpacedPanel),
+                new FrameworkPropertyMetadata(20.0, FrameworkPropertyMetadataOptions.AffectsArrange));
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            double maxHeight = 0;
+
+            foreach (UIElement child in InternalChildren)
+            {
+                if (child == null) continue;
+                child.Measure(new Size(double.PositiveInfinity, availableSize.Height));
+                maxHeight = Math.Max(maxHeight, child.DesiredSize.Height);
+            }
+
+            double totalWidth = 0;
+            if (InternalChildren.Count > 0)
+            {
+                // one spacing before first, then between centers, then last half-width
+                double centers = (InternalChildren.Count - 1) * CenterSpacing;
+                double firstHalf = InternalChildren[0].DesiredSize.Width / 2.0;
+                double lastHalf = InternalChildren[InternalChildren.Count - 1].DesiredSize.Width / 2.0;
+
+                totalWidth = CenterSpacing + centers + firstHalf + lastHalf;
+            }
+
+            return new Size(totalWidth, maxHeight);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            if (InternalChildren.Count == 0)
+                return finalSize;
+
+            for (int i = 0; i < InternalChildren.Count; i++)
+            {
+                UIElement child = InternalChildren[i];
+                if (child == null) continue;
+
+                double w = child.DesiredSize.Width;
+                double h = child.DesiredSize.Height;
+
+                // center position
+                double centerX = (i + 1) * CenterSpacing;
+
+                // left so that center is at centerX
+                double left = centerX - w / 2.0;
+                double top = (finalSize.Height - h) / 2.0;
+
+                child.Arrange(new Rect(new Point(left, top), child.DesiredSize));
+            }
+
+            return finalSize;
+        }
+
+        public void ShowOneForEach(int n)
+        {
+            if (InternalChildren.Count == 0) return;
+            if (n == 0) return;
+
+            for (int i = 0; i < InternalChildren.Count; i++)
+            {
+                UIElement child = InternalChildren[i];
+                if (child == null) continue;
+
+                if(i % n != 0) child.Visibility = Visibility.Collapsed;
+                else child.Visibility = Visibility.Visible;
+            }
+        }
+
     }
 }
